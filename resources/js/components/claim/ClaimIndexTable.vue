@@ -49,7 +49,7 @@
         >
             <template v-slot:cell(actions)="row">
                 <img src="/svg/edit.svg" style="height: 20px;" class="pl-1 pr-1" @click="edit(row.item)">
-                <img :src=getIcon(row.item) style="height: 20px;" class="pl-1 pr-1" @click="addPayment(row.item)">
+                <img :src=getIcon(row.item) :hidden=isDecided(row.item) style="height: 20px;" class="pl-1 pr-1" @click="addPayment(row.item)">
             </template>
             <template v-slot:cell(showDocument)="row">
                     <img src="/svg/show.svg" style="height: 20px;" class="pl-1 pr-1" @click="openDocument(row.item)">
@@ -94,14 +94,6 @@
 
 <script>
     export default {
-        mounted() {
-            this.$root.$on('bv::modal::show', (bvEvent, modalId) => {
-                console.log('Modal is about to be shown', bvEvent, modalId)
-            })
-            this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-                console.log('Modal is about to be shown', bvEvent, modalId)
-            })
-        },
         props: ['meeting'],
         data() {
             return {
@@ -127,10 +119,8 @@
         },
         methods: {
             myProvider(ctx) {
-                console.log('test')
                 let promise = axios.get('/claims/get?id=' + this.meeting.id + '&page=' + this.currentPage + '&perPage=' + this.perPage + '&filter=' + ctx.filter + '&filterOn' + this.filterOn + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc);
                 return promise.then(response => {
-                    console.log(response.data)
                     if(ctx.filter != null || this.startDate != null || this.endDate != null)
                         this.currentPage = 1;
                     this.totalRows = response.data[1]*this.perPage
@@ -149,6 +139,9 @@
             edit(item){
                 this.currentlySelectedItem = item;
                 this.$bvModal.show('edit-modal');
+            },
+            isDecided(item){
+              return item.decided !== 1;
             },
             addPayment(item){
                 if(item.one_time_payment ==  null && item.ongoing_payment == null){
@@ -172,7 +165,6 @@
                 this.$bvModal.hide('create-modal');
             },
             closePaymentModal(){
-                console.log('called')
                 this.$bvModal.hide('payment-modal');
             },
             getIcon(item){

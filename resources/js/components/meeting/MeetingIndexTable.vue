@@ -114,7 +114,7 @@
                 sortDesc: false,
                 fields: [
                     {key: 'date', label: 'Datum', sortable: true},
-                    {key: 'number', label: 'Nummer im Jahr', sortable: true},
+                    {key: 'number', label: 'Nummer', sortable: true},
                     {key: 'actions', label: 'Aktionen' },
                 ],
                 startDate: null,

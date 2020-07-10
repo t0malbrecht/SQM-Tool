@@ -32,7 +32,7 @@ class MeetingController extends Controller
         if($request->input('sortDesc') == 'true')
             $sortWay = 'desc';
 
-        $query = Meeting::Select(['id','date', 'number', 'yearNumberCombined']);
+        $query = Meeting::Select(['id','date', 'number']);
         if($filter != 'null' && $filter != null)
             $query->where('number', 'like', '%'.$filter.'%');
         if($startDate != 'null' && $startDate != null)
@@ -54,20 +54,15 @@ class MeetingController extends Controller
     }
 
     public function store(){
-        $date = request()->input('date');
-        $year = explode('-', $date);
-
         $data = request()->validate([
             'date' => 'required|date',
             'number' => 'required|numeric',
-            $year[0].'-'.'number' => 'unique:App\Meeting,yearNumberCombined'
         ]);
 
         try{
             $meeting =  Meeting::create([
                 'date' => $data['date'],
                 'number' => $data['number'],
-                'yearNumberCombined' => $year[0].'-'.$data['number'],
             ]);
 
             $meeting->save();
@@ -83,14 +78,13 @@ class MeetingController extends Controller
         $data = request()->validate([
             'date' => 'required|date',
             'number' => 'required|numeric',
-            'yearNumberCombined' => ''
         ]);
 
         try{
         $meeting->update([
             'date' => $data['date'],
-            'number' => $data['number'],
-            'yearNumberCombined' => $data['yearNumberCombined']]);
+            'number' => $data['number']
+        ]);
         }catch(QueryException $e){
             return response()->json(null, 433);
         }

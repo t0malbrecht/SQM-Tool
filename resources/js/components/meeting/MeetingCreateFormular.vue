@@ -49,8 +49,6 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
-                    let yearNumberCombined = this.form.date.split('-', 1)[0].concat('-',this.form.number)
-                    this.form.yearNumberCombined = yearNumberCombined;
                     axios.post('/meeting', this.form)
                         .then(response => {
                             this.fields = {}; //Clear input fields.
@@ -67,9 +65,6 @@
                             }
                             if (errors.response.status === 422) {
                                 this.errors = errors.response.data.errors || {};
-                            }
-                            if (errors.response.status === 433) {
-                                this.combinedError = 'Diese Sitzungsnummer wurde für dieses Jahr bereits vergeben';
                             }
                         });
                 }

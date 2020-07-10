@@ -1,6 +1,10 @@
 <template>
     <div>
         <b-form @submit.prevent="onSubmit" v-if="true">
+            <b-form-group id="input-group-3" label="Antrag" label-for="ot_claim_id">
+                <b-form-select v-model="form.claim_id" id="ot_claim_id" :disabled="true" :options="claim_options"></b-form-select>
+                <div v-if="this.errors && this.errors.claim_id" class="text-danger">{{ this.errors.claim_id[0] }}</div>
+            </b-form-group>
             <div class="row d-flex">
                 <div class="col-6">
                     <b-form-group
@@ -32,22 +36,18 @@
                     </b-form-group>
                 </div>
             </div>
-            <b-form-group id="input-group-3" label="Antrag" label-for="ot_claim_id">
-                <b-form-select v-model="form.claim_id" id="ot_claim_id" :disabled="true" :options="claim_options"></b-form-select>
-                <div v-if="this.errors && this.errors.claim_id" class="text-danger">{{ this.errors.claim_id[0] }}</div>
+            <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="ot_chargedFundsCenter_id">
+                <b-form-select v-model="form.chargedFundsCenter_id" id="ot_chargedFundsCenter_id"
+                               :options="funds_options"></b-form-select>
+                <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
+                    this.errors.chargedFundsCenter_id[0] }}
+                </div>
             </b-form-group>
             <b-form-group id="input-group-4" label="Begünstigte Finanzstelle" label-for="ot_favoredFundsCenter_id">
                 <b-form-select v-model="form.favoredFundsCenter_id" id="ot_favoredFundsCenter_id"
                                :options="funds_options"></b-form-select>
                 <div v-if="this.errors && this.errors.favoredFundsCenter_id" class="text-danger">{{
                     this.errors.favoredFundsCenter_id[0] }}
-                </div>
-            </b-form-group>
-            <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="ot_chargedFundsCenter_id">
-                <b-form-select v-model="form.chargedFundsCenter_id" id="ot_chargedFundsCenter_id"
-                               :options="funds_options"></b-form-select>
-                <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
-                    this.errors.chargedFundsCenter_id[0] }}
                 </div>
             </b-form-group>
             <b-form-group id="input-group-6" label="Kostenart" label-for="ot_costType_id">
@@ -58,19 +58,21 @@
                 </div>
             </b-form-group>
             <b-form-group id="input-group-7" label="Beschreibung" label-for="ot_description">
-                <b-form-input
+                <b-form-textarea
                     id="ot_description"
                     v-model="form.description"
-                ></b-form-input>
+                    size="textarea-default"
+                ></b-form-textarea>
                 <div v-if="this.errors && this.errors.description" class="text-danger">{{ this.errors.description[0]
                     }}
                 </div>
             </b-form-group>
             <b-form-group id="input-group-8" label="Auflagen" label-for="requirements">
-                <b-form-input
+                <b-form-textarea
                     id="requirements"
                     v-model="form.requirements"
-                ></b-form-input>
+                    size="textarea-default"
+                ></b-form-textarea>
                 <div v-if="this.errors && this.errors.requirements" class="text-danger">{{ this.errors.requirements[0]
                     }}
                 </div>
@@ -127,8 +129,15 @@
             axios.get('/fundsCenters/get').then(response => {
                 let array = [];
                 let i;
+                let prof;
                 for (i = 0; i < response.data[0].length; i++) {
-                    array[i] = {text: response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
+                    prof = response.data[0][i]['professor']
+                    if(prof === 'null'){
+                        prof = ''
+                    }else{
+                        prof = prof + ' - '
+                    }
+                    array[i] = {text: prof +' - '+response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
                 }
                 this.funds_options = array || [];
             }).catch(errors => {

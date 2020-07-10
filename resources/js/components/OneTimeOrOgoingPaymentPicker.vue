@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row">
+        <div class="row" :hidden="selectionHidden">
             <div class="col-3 border rounded text-center offset-3" @click="showOneTimePayment">
                 <div><img src="/svg/oneTime.svg" style="height: 30px;" class=""></div>
                 <div class="pt-1">Einmalzahlung</div>
@@ -25,6 +25,7 @@
             return {
                 oneTimePaymentHidden: true,
                 ongoingPaymentHidden: true,
+                selectionHidden: false,
                 oneTimePayment: null,
                 ongoingPayment: null,
                 payment: null
@@ -36,10 +37,12 @@
         methods: {
             showOneTimePayment() {
                 this.selectionHidden = true;
+                this.ongoingPaymentHidden = true;
                 this.oneTimePaymentHidden = false;
             },
             showOngoingPayment() {
                 this.selectionHidden = true;
+                this.oneTimePaymentHidden = true;
                 this.ongoingPaymentHidden = false;
             }
         }

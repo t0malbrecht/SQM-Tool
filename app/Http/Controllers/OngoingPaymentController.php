@@ -40,11 +40,11 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required',
+            'description' => 'required|max:255',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
-            'requirements' => '',
+            'requirements' => 'max:500',
         ]);
 
         try {
@@ -76,11 +76,11 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required',
+            'description' => 'required|max:255',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
-            'requirements' => '',
+            'requirements' => 'max:500',
         ]);
         try {
             $ongoingPayment->update([

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Meeting extends Model
 {
     protected $fillable = [
-        'date', 'number','yearNumberCombined',
+        'date', 'number',
     ];
 
     public function claims()

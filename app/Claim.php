@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Claim extends Model
 {
     protected $fillable = [
-        'title', 'ioa', 'printNumber', 'claimant', 'document', 'meeting_id'
+        'title', 'ioa', 'printNumber', 'claimant', 'document', 'meeting_id', 'decided'
     ];
 
     public function oneTimePayment()

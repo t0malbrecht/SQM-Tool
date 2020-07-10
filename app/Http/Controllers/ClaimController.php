@@ -16,12 +16,20 @@ class ClaimController extends Controller
 
         $data = request()->validate([
             'meeting_id' => 'required|numeric',
-            'title' => 'required',
+            'title' => 'required|max:255',
             'ioa' => 'required',
             'printNumber' => 'required|numeric',
             'claimant' => 'required',
-            'document' => 'required'
+            'document' => 'required|mimes:pdf',
+            'decided' => ''
         ]);
+
+        if($data['decided'] == 'true'){
+            $data['decided'] = true;
+        }else{
+            $data['decided'] = false;
+        }
+
 
         $upload_path = request()->document->store('claimDocuments', 'public');
 
@@ -33,6 +41,7 @@ class ClaimController extends Controller
                 'claimant' => $data['claimant'],
                 'meeting_id' => $data['meeting_id'],
                 'document' => $upload_path,
+                'decided' => $data['decided']
             ]);
             $claim->save();
         }catch (QueryException $ex){
@@ -94,11 +103,18 @@ class ClaimController extends Controller
 
         $data = request()->validate([
             'meeting_id' => 'required|numeric',
-            'title' => 'required',
+            'title' => 'required|max:255',
             'ioa' => 'required',
             'printNumber' => 'required|numeric',
-            'claimant' => 'required'
+            'claimant' => 'required',
+            'decided' => ''
         ]);
+
+        if($data['decided'] == 'true'){
+            $data['decided'] = true;
+        }else{
+            $data['decided'] = false;
+        }
 
         try{
             $claim->update([
@@ -107,6 +123,7 @@ class ClaimController extends Controller
                 'printNumber' => $data['printNumber'],
                 'claimant' => $data['claimant'],
                 'meeting_id' => $data['meeting_id'],
+                'decided' => $data['decided']
             ]);
         }catch(QueryException $e){
             return response()->json(null, 433);

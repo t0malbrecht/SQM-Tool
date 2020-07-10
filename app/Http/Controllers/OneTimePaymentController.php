@@ -28,8 +28,8 @@ class OneTimePaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required',
-            'requirements' => 'required',
+            'description' => 'required|max:255',
+            'requirements' => 'required|max:500',
             'dueDate' => 'required|date',
         ]);
 
@@ -97,8 +97,8 @@ class OneTimePaymentController extends Controller
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
             'spentFunds' => '',
-            'description' => 'required',
-            'requirements' => 'required',
+            'description' => 'required|max:255',
+            'requirements' => 'required|max:500',
             'dueDate' => 'required|date',
             'spentDate' => ''
         ]);

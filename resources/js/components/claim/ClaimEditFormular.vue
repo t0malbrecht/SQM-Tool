@@ -1,9 +1,21 @@
 <template>
     <div>
         <b-form @submit.prevent="onSubmit" v-if="true">
-            <b-form-group id="input-group-1" label="Beschlossen in Sitzung:" label-for="meeting_id">
+            <b-form-group id="input-group-1" label="Termin der Sitzung" label-for="meeting_id">
                 <b-form-select v-model="form.meeting_id" id="meeting_id" :options="options"></b-form-select>
                 <div v-if="this.errors && this.errors.meeting_id" class="text-danger">{{ this.errors.meeting_id[0] }}</div>
+            </b-form-group>
+            <b-form-group id="input-group-7">
+                <b-form-checkbox
+                    id="decided"
+                    v-model="form.decided"
+                    name="checkbox-1"
+                    value="true"
+                    unchecked-value="false"
+                >
+                    Antrag wurde beschlossen
+                </b-form-checkbox>
+                <div v-if="this.errors && this.errors.decided" class="text-danger">{{ this.errors.decided[0] }}</div>
             </b-form-group>
             <b-form-group id="input-group-2" label="Antragstitel" label-for="title">
                 <b-form-input
@@ -60,13 +72,13 @@
                 for (i=0; i<response.data[0].length; i++) {
                     array[i] = {text: response.data[0][i].yearNumberCombined, value: response.data[0][i].id, disabled: false};
                 }
-                console.log(this.claim)
                 this.options = array || [];
                 this.form.meeting_id = this.claim.meeting_id;
                 this.form.title =  this.claim.title;
                 this.form.ioa = this.claim.ioa
                 this.form.printNumber = this.claim.printNumber;
                 this.form.claimant =  this.claim.claimant;
+                this.form.decided = this.claim.decided === 1;
             }).catch(errors => {});
         },
         methods: {

@@ -10,17 +10,24 @@
                     <b-form-group
                         id="input-group-1"
                         label="Nutzbar bis:"
-                        label-for="input1"
-                    >
-                        <b-form-datepicker
-                            v-model="form.dueDate"
-                            id="startDate"
-                            :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-                            locale="de"
-                        ></b-form-datepicker>
-                        <div v-if="this.errors && this.errors.dueDate" class="text-danger">{{ this.errors.dueDate[0]
-                            }}
-                        </div>
+                        label-for="dueDate">
+                        <b-dropdown id="dropdown-form" text="Datum wählen" variant="bg-white" ref="dropdown" style="width: 100% !important; border: 1px solid #ced4da; border-radius: 0.25rem;">
+                            <b-dropdown-form class="d-flex align-items-start">
+                                <b-form-group label="Semester">
+                                    <b-form-radio v-model="dueDate" @submit.prevent @change="changeDueDateText" value="03-31">Sommersemester</b-form-radio>
+                                    <b-form-radio v-model="dueDate" @submit.prevent @change="changeDueDateText" value="09-30">Wintersemester</b-form-radio>
+                                </b-form-group>
+
+                                <b-dropdown-divider></b-dropdown-divider>
+
+                                <b-form-group label="Jahr" label-for="dropdown-form-year">
+                                    <b-form-input @change="changeDueDateText" @submit.prevent v-on:keydown.enter.prevent
+                                        type="number"
+                                        v-model="dueYear"
+                                    ></b-form-input>
+                                </b-form-group>
+                            </b-dropdown-form>
+                        </b-dropdown>
                     </b-form-group>
                 </div>
                 <div class="col-6">
@@ -57,19 +64,19 @@
                     this.errors.costType_id[0] }}
                 </div>
             </b-form-group>
-            <b-form-group id="input-group-7" label="Beschreibung" label-for="ot_description">
+            <b-form-group id="input-group-7" label="Notizen" label-for="ot_notes">
                 <b-form-textarea
-                    id="ot_description"
-                    v-model="form.description"
+                    id="ot_notes"
+                    v-model="form.notes"
                     size="textarea-default"
                 ></b-form-textarea>
-                <div v-if="this.errors && this.errors.description" class="text-danger">{{ this.errors.description[0]
+                <div v-if="this.errors && this.errors.notes" class="text-danger">{{ this.errors.notes[0]
                     }}
                 </div>
             </b-form-group>
-            <b-form-group id="input-group-8" label="Auflagen" label-for="requirements">
+            <b-form-group id="input-group-8" label="Auflagen" label-for="ot_requirements">
                 <b-form-textarea
-                    id="requirements"
+                    id="ot_requirements"
                     v-model="form.requirements"
                     size="textarea-default"
                 ></b-form-textarea>
@@ -95,6 +102,8 @@
                 claim_options: [],
                 funds_options: [],
                 costType_options: [],
+                dueDate: 'Nichts ausgewählt',
+                dueYear: ''
             }
         },
         methods: {
@@ -103,14 +112,14 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
-                    console.log(this.form)
+                    this.form.dueDate = this.dueYear + '-' + this.dueDate;
                     axios.post('/oneTimePayment', this.form)
                         .then(response => {
                             console.log(response.data);
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
-                            //window.location = '/sqmPayments'
+                            this.$emit('closeModal');
                         })
                         .catch(errors => {
                             this.loaded = true;
@@ -123,6 +132,9 @@
                             console.log(errors.response.data);
                         });
                 }
+            },
+            changeDueDateText(){
+                setTimeout(()=> {document.getElementById("dropdown-form__BV_toggle_").firstChild.data = this.dueYear + '-' + this.dueDate; }, 500);
             }
         },
         created() {
@@ -132,12 +144,13 @@
                 let prof;
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
-                    if(prof === 'null'){
+                    console.log(prof)
+                    if(prof === null){
                         prof = ''
                     }else{
-                        prof = prof + ' - '
+                        prof = ' - ' + prof
                     }
-                    array[i] = {text: prof +' - '+response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
+                    array[i] = {text: response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'] + prof, value: response.data[0][i]['id'], disabled: false};
                 }
                 this.funds_options = array || [];
             }).catch(errors => {

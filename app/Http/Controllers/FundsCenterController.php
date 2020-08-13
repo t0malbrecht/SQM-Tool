@@ -79,7 +79,7 @@ class FundsCenterController extends Controller
                 'fond' => $data['fond'],
                 'teachingUnit' => $data['teachingUnit'],
                 'faculty' => $data['faculty'],
-                'professor' => null,
+                'professor' => $data['professor'],
                 'level' => $data['level'],
             ]);
             $fundsCenter->save();
@@ -111,7 +111,7 @@ class FundsCenterController extends Controller
                 'fond' => $data['fond'],
                 'teachingUnit' => $data['teachingUnit'],
                 'faculty' => $data['faculty'],
-                'professor' => null,
+                'professor' => $data['professor'],
                 'level' => $data['level'],
             ]);
         }catch (QueryException $ex){

@@ -6,17 +6,16 @@
                     <b-form-group
                         id="input-group-1"
                         label="Nutzbar bis:"
-                        label-for="dueDate"
-                    >
-                        <b-form-datepicker
-                            v-model="form.dueDate"
-                            id="dueDate"
-                            :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-                            locale="de"
-                        ></b-form-datepicker>
-                        <div v-if="this.errors && this.errors.dueDate" class="text-danger">{{ this.errors.dueDate[0]
-                            }}
-                        </div>
+                        label-for="dueDate">
+                    <b-form-datepicker
+                        v-model="form.dueDate"
+                        id="startDate"
+                        :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
+                        locale="de"
+                    ></b-form-datepicker>
+                    <div v-if="this.errors && this.errors.dueDate" class="text-danger">{{ this.errors.dueDate[0]
+                        }}
+                    </div>
                     </b-form-group>
                 </div>
                 <div class="col-6">
@@ -88,20 +87,22 @@
                     this.errors.costType_id[0] }}
                 </div>
             </b-form-group>
-            <b-form-group id="input-group-7" label="Beschreibung" label-for="description">
-                <b-form-input
-                    id="description"
-                    v-model="form.description"
-                ></b-form-input>
-                <div v-if="this.errors && this.errors.description" class="text-danger">{{ this.errors.description[0]
+            <b-form-group id="input-group-7" label="Notizen" label-for="notes">
+                <b-form-textarea
+                    id="notes"
+                    v-model="form.notes"
+                    size="textarea-default"
+                ></b-form-textarea>
+                <div v-if="this.errors && this.errors.notes" class="text-danger">{{ this.errors.notes[0]
                     }}
                 </div>
             </b-form-group>
             <b-form-group id="input-group-8" label="Auflagen" label-for="requirements">
-                <b-form-input
+                <b-form-textarea
                     id="requirements"
                     v-model="form.requirements"
-                ></b-form-input>
+                    size="textarea-default"
+                ></b-form-textarea>
                 <div v-if="this.errors && this.errors.requirements" class="text-danger">{{ this.errors.requirements[0]
                     }}
                 </div>
@@ -130,8 +131,16 @@
             axios.get('/fundsCenters/get').then(response => {
                 let array = [];
                 let i;
+                let prof;
                 for (i = 0; i < response.data[0].length; i++) {
-                    array[i] = {text: response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
+                    prof = response.data[0][i]['professor']
+                    console.log(prof)
+                    if(prof === null){
+                        prof = ''
+                    }else{
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {text: response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'] + prof, value: response.data[0][i]['id'], disabled: false};
                 }
                 this.funds_options = array || [];
             }).catch(errors => {
@@ -161,7 +170,7 @@
                 this.form.favoredFundsCenter_id =  this.payment.favored_funds_center.id;
                 this.form.chargedFundsCenter_id = this.payment.charged_funds_center.id;
                 this.form.costType_id = this.payment.cost_type.id;
-                this.form.description = this.payment.description;
+                this.form.notes = this.payment.notes;
                 this.form.requirements = this.payment.requirements;
             }).catch(errors => {
             });

@@ -70,7 +70,7 @@
                 let array = [];
                 let i;
                 for (i=0; i<response.data[0].length; i++) {
-                    array[i] = {text: response.data[0][i].yearNumberCombined, value: response.data[0][i].id, disabled: false};
+                    array[i] = {text: response.data[0][i].date, value: response.data[0][i].id, disabled: false};
                 }
                 this.options = array || [];
                 this.form.meeting_id = this.claim.meeting_id;

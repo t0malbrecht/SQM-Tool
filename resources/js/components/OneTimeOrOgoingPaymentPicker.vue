@@ -11,8 +11,8 @@
             </div>
         </div>
         <div>
-            <onetimepayment-create-formular v-bind:claim="claim" :hidden=oneTimePaymentHidden></onetimepayment-create-formular>
-            <ongoingpayment-create-formular v-bind:claim="claim" :hidden=ongoingPaymentHidden></ongoingpayment-create-formular>
+            <onetimepayment-create-formular @closeModal="closeModal" v-bind:claim="claim" :hidden=oneTimePaymentHidden></onetimepayment-create-formular>
+            <ongoingpayment-create-formular @closeModal="closeModal" v-bind:claim="claim" :hidden=ongoingPaymentHidden></ongoingpayment-create-formular>
         </div>
     </div>
 </template>
@@ -44,6 +44,10 @@
                 this.selectionHidden = true;
                 this.oneTimePaymentHidden = true;
                 this.ongoingPaymentHidden = false;
+            },
+            closeModal(){
+                this.$emit('closeModal');
+                this.$root.$emit('bv::refresh::table', 't1');
             }
         }
     }

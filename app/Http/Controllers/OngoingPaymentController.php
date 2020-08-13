@@ -40,11 +40,12 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required|max:255',
+            'notes' => 'required|max:500',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
             'requirements' => 'max:500',
+            'christmasBonus' => ''
         ]);
 
         try {
@@ -54,11 +55,12 @@ class OngoingPaymentController extends Controller
                 'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
-                'description' => $data['description'],
+                'notes' => $data['notes'],
                 'plannedStartDate' => $data['plannedStartDate'],
                 'plannedEndDate' => $data['plannedEndDate'],
                 'due' => $data['due'],
                 'requirements' => $data['requirements'],
+                'christmasBonus' => $data['christmasBonus'] ?? null
             ]);
             $ongoingPayment->save();
             $this->createPaymentHistories($data, $ongoingPayment);
@@ -76,11 +78,12 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required|max:255',
+            'notes' => 'required|max:500',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
             'requirements' => 'max:500',
+            'christmasBonus' => ''
         ]);
         try {
             $ongoingPayment->update([
@@ -89,11 +92,12 @@ class OngoingPaymentController extends Controller
                 'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
-                'description' => $data['description'],
+                'notes' => $data['notes'],
                 'plannedStartDate' => $data['plannedStartDate'],
                 'plannedEndDate' => $data['plannedEndDate'],
                 'due' => $data['due'],
                 'requirements' => $data['requirements'],
+                'christmasBonus' => $data['christmasBonus'] ?? null
             ]);
             $this->deletePlannedPaymentHistories($data, $ongoingPayment);
 
@@ -113,15 +117,17 @@ class OngoingPaymentController extends Controller
         $due = $data['due'];
         if($due == 'monthly'){
             $interval = DateInterval::createFromDateString('1 months');
+            $startDate = $startDate->modify('first day of this month');
+            $endDate = $endDate->modify('first day of next month');
             $period = new DatePeriod($startDate, $interval, $endDate);
-        }else {
-            if($due == 'halfyearly'){
-                $interval = DatesInterval::createFromDateString('6 months');
+
+        }else if($due == 'halfyearly'){
+                $interval = DateInterval::createFromDateString('6 months');
                 $period = new DatePeriod($startDate, $interval, $endDate);
-            }else if($due == 'yearly'){
+        }else if($due == 'yearly'){
                 $interval = DateInterval::createFromDateString('1 year');
+                $endDate = $endDate->modify( '+1 day' );
                 $period = new DatePeriod($startDate, $interval, $endDate);
-            }
         }
         foreach ($period as $dt) {
             $plannedPaymentDate = ($dt->format("Y-m-d"));
@@ -131,7 +137,16 @@ class OngoingPaymentController extends Controller
                 'grantedFunds' => $data['grantedFunds'],
                 'plannedPaymentDate' => $plannedPaymentDate,
             ]);
-        }
+            $dontCalculateChristmasBonus = $data['christmasBonus'] ?? false;
+            if($dt->format("n") == 10 && $due == 'monthly' && !$dontCalculateChristmasBonus){
+                    $ongoingPayment->ongoingPaymentHistories()->create([
+                        'claim_id' => $data['claim_id'],
+                        'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
+                        'grantedFunds' => $data['grantedFunds'],
+                        'plannedPaymentDate' => $plannedPaymentDate,
+                    ]);
+                }
+            }
     }
 
     public function deletePlannedPaymentHistories($data, $ongoingPayment){
@@ -162,7 +177,7 @@ class OngoingPaymentController extends Controller
         $query = OngoingPayment::with(['favoredFundsCenter','chargedFundsCenter', 'claim', 'costType']);
         if($filter != 'null' && $filter != null) {
             $query->where('grantedFunds', 'like', '%' . $filter . '%')
-                ->orWhere('description', 'like', '%' . $filter . '%')
+                ->orWhere('notes', 'like', '%' . $filter . '%')
                 ->orWhere('requirements', 'like', '%' . $filter . '%');
         }
         if($startDate != 'null' && $startDate != null)
@@ -185,6 +200,10 @@ class OngoingPaymentController extends Controller
         $startDate = htmlspecialchars($request->input('startDate'));
         $endDate = htmlspecialchars($request->input('endDate'));
 
+        if($startDate == 'null' || $endDate == 'null'){
+            return('Sie müssen ein Start und ein Enddatum auswählen');
+        }
+
         $filepath = storage_path('app/public/') . 'formularDocuments/AntragAufBudgetumbuchung.pdf';
         $pdf = new Pdf($filepath, [
             'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
@@ -193,6 +212,9 @@ class OngoingPaymentController extends Controller
             //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
 
+        $date = explode('-', $ongoingPayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
         $pdf->fillForm([
             'name' => auth()->user()->personalData->lastname . ', ' . auth()->user()->personalData->firstname,
             'number' => auth()->user()->personalData->number,
@@ -203,6 +225,9 @@ class OngoingPaymentController extends Controller
             'chargedFonds' => $ongoingPayment->chargedFundsCenter->fond,
             'favoredFundsCenter' => $ongoingPayment->favoredFundsCenter->fundsCenterNumber,
             'favoredFonds' => $ongoingPayment->favoredFundsCenter->fond,
+            'reason' => 'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $ongoingPayment->claim->ioa .
+                ', SKII/' . $ongoingPayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
         ])->needAppearances()->send();
     }
 
@@ -210,6 +235,10 @@ class OngoingPaymentController extends Controller
         $ongoingPayment = OngoingPayment::find(htmlspecialchars($request->input('id')));
         $startDate = htmlspecialchars($request->input('startDate'));
         $endDate = htmlspecialchars($request->input('endDate'));
+
+        if($startDate == 'null' || $endDate == 'null'){
+            return('Sie müssen ein Start und ein Enddatum auswählen');
+        }
 
         $filepath = storage_path('app/public/') . 'formularDocuments/BeschlussDerStudienkommission.pdf';
         $pdf = new Pdf($filepath, [
@@ -219,13 +248,14 @@ class OngoingPaymentController extends Controller
             //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
 
-        $year = explode('-', $ongoingPayment->claim->date)[0];
-        //$year = ''.$year;
-        $lastTwoDigitsOfYear = substr($year, -2);
+
+        $date = explode('-', $ongoingPayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
         $pdf->fillForm([
             'title' => $ongoingPayment->claim->title,
-            'meeting' =>    'SK II:' . $ongoingPayment->claim->meeting->date .
-                ' TOP ' . $ongoingPayment->claim->ioa .
+            'meeting' =>    'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $ongoingPayment->claim->ioa .
                 ', SKII/' . $ongoingPayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
             'permit' => $ongoingPayment->ongoingPaymentHistories()->where('plannedPaymentDate', ">=", $startDate)
                 ->where('plannedPaymentDate', "<=", $endDate)->sum('grantedFunds'),
@@ -234,6 +264,27 @@ class OngoingPaymentController extends Controller
             'costcenter' => $ongoingPayment->chargedFundsCenter->costCenter,
             'fonds' => $ongoingPayment->chargedFundsCenter->fond,
             'date' => date("d.m.y")
+        ])->needAppearances()->send();
+    }
+
+    public function createVnFormular(OngoingPayment $ongoingPayment){
+        $filepath = storage_path('app/public/') . 'formularDocuments/Verwendungsnachweis.pdf';
+        $pdf = new Pdf($filepath, [
+            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            // or on most Windows systems:
+            // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
+            //'useExec' => true,  // May help on Windows systems if execution fails
+        ]);
+
+        $date = explode('-', $ongoingPayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
+        $pdf->fillForm([
+            'title' => $ongoingPayment->claim->title,
+            'meeting' =>    'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $ongoingPayment->claim->ioa .
+                ', SKII/' . $ongoingPayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
+            'start' => $germanDateFormat,
         ])->needAppearances()->send();
     }
 

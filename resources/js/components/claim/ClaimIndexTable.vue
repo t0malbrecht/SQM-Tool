@@ -148,10 +148,10 @@
                     this.currentlySelectedItem = item;
                     this.$bvModal.show('payment-modal')
                 }else{
-                    if(item.due == null){
-                        window.open("/oneTimePayment/"+item.id)
+                    if(item.ongoing_payment == null){
+                        window.open("/oneTimePayment/"+item.one_time_payment.id)
                     }else{
-                        window.open("/ongoingPayment/"+item.id)
+                        window.open("/ongoingPayment/"+item.ongoing_payment.id)
                     }
                 }
             },

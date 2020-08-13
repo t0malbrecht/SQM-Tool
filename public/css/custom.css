@@ -1,0 +1,9 @@
+.table-col-max-250{
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 250px !important;
+}
+.dropdown-menu{
+    width: 100% !important;
+}

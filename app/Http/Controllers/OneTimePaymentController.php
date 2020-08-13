@@ -23,13 +23,13 @@ class OneTimePaymentController extends Controller
 
     public function store(){
         $data = request()->validate([
-            'claim_id' => 'required|numeric',
+            'claim_id' => 'required|numeric|unique:one_time_payments',
             'favoredFundsCenter_id' => 'required|numeric',
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'description' => 'required|max:255',
-            'requirements' => 'required|max:500',
+            'notes' => 'max:500',
+            'requirements' => 'max:500',
             'dueDate' => 'required|date',
         ]);
 
@@ -40,8 +40,8 @@ class OneTimePaymentController extends Controller
                 'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
-                'description' => $data['description'],
-                'requirements' => $data['requirements'],
+                'notes' => $data['notes'] ?? null,
+                'requirements' => $data['requirements'] ?? null,
                 'dueDate' => $data['dueDate'],
             ]);
             $oneTimePayment->save();
@@ -71,7 +71,7 @@ class OneTimePaymentController extends Controller
             $query->where('grantedFunds', 'like', '%' . $filter . '%')
                 ->orWhere('spentFunds', 'like', '%' . $filter . '%')
                 ->orWhere('spentDate', 'like', '%' . $filter . '%')
-                ->orWhere('description', 'like', '%' . $filter . '%')
+                ->orWhere('notes', 'like', '%' . $filter . '%')
                 ->orWhere('requirements', 'like', '%' . $filter . '%')
                 ->orWhere('dueDate', 'like', '%' . $filter . '%');
         }
@@ -97,8 +97,8 @@ class OneTimePaymentController extends Controller
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
             'spentFunds' => '',
-            'description' => 'required|max:255',
-            'requirements' => 'required|max:500',
+            'notes' => 'max:500',
+            'requirements' => 'max:500',
             'dueDate' => 'required|date',
             'spentDate' => ''
         ]);
@@ -110,8 +110,8 @@ class OneTimePaymentController extends Controller
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
                 'spentFunds' => $data['spentFunds'],
-                'description' => $data['description'],
-                'requirements' => $data['requirements'],
+                'notes' => $data['notes'] ?? null,
+                'requirements' => $data['requirements'] ?? null,
                 'dueDate' => $data['dueDate'],
                 'spentDate' => $data['spentDate'],
             ]);
@@ -136,6 +136,9 @@ class OneTimePaymentController extends Controller
             //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
 
+        $date = explode('-', $oneTimePayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
         $pdf->fillForm([
             'name' => auth()->user()->personalData->lastname . ', ' . auth()->user()->personalData->firstname,
             'number' => auth()->user()->personalData->number,
@@ -145,6 +148,9 @@ class OneTimePaymentController extends Controller
             'chargedFonds' => $oneTimePayment->chargedFundsCenter->fond,
             'favoredFundsCenter' => $oneTimePayment->favoredFundsCenter->fundsCenterNumber,
             'favoredFonds' => $oneTimePayment->favoredFundsCenter->fond,
+            'reason' =>    'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $oneTimePayment->claim->ioa .
+                ', SKII/' . $oneTimePayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
         ])->needAppearances()->send();
     }
 
@@ -157,13 +163,13 @@ class OneTimePaymentController extends Controller
             //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
 
-        $year = explode('-', $oneTimePayment->claim->date)[0];
-        //$year = ''.$year;
-        $lastTwoDigitsOfYear = substr($year, -2);
+        $date = explode('-', $oneTimePayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
         $pdf->fillForm([
             'title' => $oneTimePayment->claim->title,
-            'meeting' =>    'SK II:' . $oneTimePayment->claim->meeting->date .
-                ' TOP ' . $oneTimePayment->claim->ioa .
+            'meeting' =>    'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $oneTimePayment->claim->ioa .
                 ', SKII/' . $oneTimePayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
             'permit' => $oneTimePayment->grantedFunds,
             'requirements' => $oneTimePayment->requirements,
@@ -171,6 +177,27 @@ class OneTimePaymentController extends Controller
             'costcenter' => $oneTimePayment->chargedFundsCenter->costCenter,
             'fonds' => $oneTimePayment->chargedFundsCenter->fond,
             'date' => date("d.m.y")
+        ])->needAppearances()->send();
+    }
+
+    public function createVnFormular(OneTimePayment $oneTimePayment){
+        $filepath = storage_path('app/public/') . 'formularDocuments/Verwendungsnachweis.pdf';
+        $pdf = new Pdf($filepath, [
+            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            // or on most Windows systems:
+            // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
+            //'useExec' => true,  // May help on Windows systems if execution fails
+        ]);
+
+        $date = explode('-', $oneTimePayment->claim->meeting->date);
+        $germanDateFormat = $date[2].'.'.$date[1].'.'.$date[0];
+        $lastTwoDigitsOfYear = substr($date[0], -2);
+        $pdf->fillForm([
+            'title' => $oneTimePayment->claim->title,
+            'meeting' =>    'SK II: ' . $germanDateFormat .
+                ' TOP 2.1.' . $oneTimePayment->claim->ioa .
+                ', SKII/' . $oneTimePayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
+            'start' => $germanDateFormat,
         ])->needAppearances()->send();
     }
 }

@@ -48,12 +48,14 @@ Route::get('/oneTimePayments/', 'OneTimePaymentController@index')->name('oneTime
 Route::get('/oneTimePayments/get', 'OneTimePaymentController@serveOneTimePayment')->name('oneTimePayment.serveOneTimePayment');
 Route::get('/oneTimePayment/createTransferFormular/{oneTimePayment}', 'OneTimePaymentController@createTransferFormular')->name('oneTimePayment.createTransferFormular');
 Route::get('/oneTimePayment/createBskFormular/{oneTimePayment}', 'OneTimePaymentController@createBskFormular')->name('oneTimePayment.createBskFormular');
+Route::get('/oneTimePayment/createVnFormular/{oneTimePayment}', 'OneTimePaymentController@createVnFormular')->name('oneTimePayment.createVnFormular');
 Route::post('/oneTimePayment', 'OneTimePaymentController@store')->name('oneTimePayment.store');
 
 #OngoingPayment
 Route::get('/ongoingPayment/create', 'OngoingPaymentController@create')->name('ongoingPayment.create');
 Route::get('/ongoingPayment/createTransferFormular', 'OngoingPaymentController@createTransferFormular')->name('ongoingPayment.createTransferFormular');
 Route::get('/ongoingPayment/createBskFormular', 'OngoingPaymentController@createBskFormular')->name('ongoingPayment.createBskFormular');
+Route::get('/ongoingPayment/createVnFormular/{ongoingPayment}', 'OngoingPaymentController@createVnFormular')->name('ongoingPayment.createVnFormular');
 Route::get('/ongoingPayment/{ongoingPayment}', 'OngoingPaymentController@show')->name('ongoingPayment.show');
 Route::patch('/ongoingPayment/{ongoingPayment}', 'OngoingPaymentController@update')->name('ongoingPayment.update');
 Route::get('/ongoingPayments/', 'OngoingPaymentController@index')->name('ongoingPayment.index');

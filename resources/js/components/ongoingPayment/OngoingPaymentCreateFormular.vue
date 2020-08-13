@@ -8,12 +8,23 @@
                         label="Geplantes Startdatum"
                         label-for="plannedStartDate"
                     >
-                        <b-form-datepicker
-                            v-model="form.plannedStartDate"
-                            id="plannedStartDate"
-                            :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-                            locale="de"
-                        ></b-form-datepicker>
+                        <b-dropdown id="dropdown-form-start" text="Datum wählen" variant="bg-white" ref="dropdown" style="width: 100% !important; border: 1px solid #ced4da; border-radius: 0.25rem;">
+                            <b-dropdown-form class="d-flex align-items-start">
+                                <b-form-group label="Semester">
+                                    <b-form-radio v-model="startDate" @submit.prevent @change="changeStartDateText" value="04-01">Sommersemester</b-form-radio>
+                                    <b-form-radio v-model="startDate" @submit.prevent @change="changeStartDateText" value="10-01">Wintersemester</b-form-radio>
+                                </b-form-group>
+
+                                <b-dropdown-divider></b-dropdown-divider>
+
+                                <b-form-group label="Jahr" label-for="dropdown-form-year">
+                                    <b-form-input @change="changeStartDateText" @submit.prevent v-on:keydown.enter.prevent
+                                                  type="number"
+                                                  v-model="startYear"
+                                    ></b-form-input>
+                                </b-form-group>
+                            </b-dropdown-form>
+                        </b-dropdown>
                         <div v-if="this.errors && this.errors.plannedStartDate" class="text-danger">{{
                             this.errors.plannedStartDate[0]
                             }}
@@ -26,12 +37,23 @@
                         label="Geplantes Enddatum"
                         label-for="plannedEndDate"
                     >
-                        <b-form-datepicker
-                            v-model="form.plannedEndDate"
-                            id="plannedEndDate"
-                            :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-                            locale="de"
-                        ></b-form-datepicker>
+                        <b-dropdown id="dropdown-form-end" text="Datum wählen" variant="bg-white" ref="dropdown" style="width: 100% !important; border: 1px solid #ced4da; border-radius: 0.25rem;">
+                            <b-dropdown-form class="d-flex align-items-start">
+                                <b-form-group label="Semester">
+                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="03-31">Sommersemester</b-form-radio>
+                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="09-30">Wintersemester</b-form-radio>
+                                </b-form-group>
+
+                                <b-dropdown-divider></b-dropdown-divider>
+
+                                <b-form-group label="Jahr" label-for="dropdown-form-year">
+                                    <b-form-input @change="changeEndDateText" @submit.prevent v-on:keydown.enter.prevent
+                                                  type="number"
+                                                  v-model="endYear"
+                                    ></b-form-input>
+                                </b-form-group>
+                            </b-dropdown-form>
+                        </b-dropdown>
                         <div v-if="this.errors && this.errors.plannedEndDate" class="text-danger">{{
                             this.errors.plannedEndDate[0]
                             }}
@@ -63,7 +85,9 @@
                 <div class="col-6">
                     <b-form-group id="input-group-6" label="Kostenart" label-for="costType_id">
                         <b-form-select v-model="form.costType_id" id="costType_id"
-                                       :options="costType_options"></b-form-select>
+                                       :options="costType_options"
+                                        @change="changedCostType">
+                        </b-form-select>
                         <div v-if="this.errors && this.errors.costType_id" class="text-danger">{{
                             this.errors.costType_id[0] }}
                         </div>
@@ -72,7 +96,8 @@
                     <div class="col-6">
                         <b-form-group id="input-group-8" label="Fälligkeit" label-for="due">
                             <b-form-select v-model="form.due" id="due"
-                                           :options="due_options"></b-form-select>
+                                           :options="due_options"
+                            ></b-form-select>
                             <div v-if="this.errors && this.errors.due" class="text-danger">{{
                                 this.errors.due[0] }}
                             </div>
@@ -84,27 +109,29 @@
                     <div v-if="this.errors && this.errors.claim_id" class="text-danger">{{ this.errors.claim_id[0] }}
                     </div>
                 </b-form-group>
-                <b-form-group id="input-group-7" label="Beschreibung" label-for="description">
-                    <b-form-input
-                        id="description"
-                        v-model="form.description"
-                    ></b-form-input>
-                    <div v-if="this.errors && this.errors.description" class="text-danger">{{ this.errors.description[0]
+                <b-form-group id="input-group-7" label="Notizen" label-for="notes">
+                    <b-form-textarea
+                        id="notes"
+                        v-model="form.notes"
+                        size="textarea-default"
+                    ></b-form-textarea>
+                    <div v-if="this.errors && this.errors.notes" class="text-danger">{{ this.errors.notes[0]
                         }}
                     </div>
                 </b-form-group>
             <b-form-group id="input-group-12" label="Anforderungen" label-for="requirements">
-                <b-form-input
+                <b-form-textarea
                     id="requirements"
                     v-model="form.requirements"
-                ></b-form-input>
+                    size="textarea-default"
+                ></b-form-textarea>
                 <div v-if="this.errors && this.errors.requirements" class="text-danger">{{ this.errors.requirements[0]
                     }}
                 </div>
             </b-form-group>
             <div class="row d-flex">
-                <div class="col-10">
-            <b-form-group id="input-group-11" label="Betrag (pro Fälligkeit)" label-for="grantedFunds">
+                <div class="col-6">
+            <b-form-group id="input-group-11" label="Brutto-Betrag (pro Fälligkeit)" label-for="grantedFunds">
                 <b-form-input
                     id="grantedFunds"
                     v-model="form.grantedFunds"
@@ -114,7 +141,7 @@
                 </div>
             </b-form-group>
                 </div>
-                <div class="col-2">
+                <div class="col-6">
                     <b-form-checkbox
                         id="christmasBonus"
                         v-model="this.form.christmasBonus"
@@ -122,7 +149,7 @@
                         value="true"
                         unchecked-value="false"
                     >
-                        Weihnachtsgeld berechnen
+                        Weihnachtsgeld nicht berechnen
                     </b-form-checkbox>
                 </div>
             </div>
@@ -149,7 +176,11 @@
                     {value: 'halfyearly', text: 'halbjährlich'},
                     {value: 'yearly', text: 'jährlich'},
                 ],
-                christmasBonus: 'false'
+                christmasBonus: 'false',
+                endDate: 'nicht ausgewählt',
+                endYear: '',
+                startDate: 'nicht ausgewählt',
+                startYear: ''
             }
         },
         methods: {
@@ -158,6 +189,8 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
+                    this.form.plannedStartDate = this.startYear + '-' + this.startDate;
+                    this.form.plannedEndDate = this.endYear + '-' + this.endDate;
                     console.log(this.form)
                     axios.post('/ongoingPayment', this.form)
                         .then(response => {
@@ -165,7 +198,7 @@
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
-                            //window.location = '/sqmPayments'
+                            this.$emit('closeModal');
                         })
                         .catch(errors => {
                             this.loaded = true;
@@ -178,18 +211,34 @@
                             console.log(errors.response.data);
                         });
                 }
+            },
+            changeStartDateText(){
+                setTimeout(()=> {document.getElementById("dropdown-form-start__BV_toggle_").firstChild.data = this.startYear + '-' + this.startDate; }, 500);
+            },
+            changeEndDateText(){
+                setTimeout(()=> {document.getElementById("dropdown-form-end__BV_toggle_").firstChild.data = this.endYear + '-' + this.endDate; }, 500);
+            },
+            changedCostType(){
+                console.log(this.form.costType_id)
+                if(this.form.costType_id === 1){
+                    this.form.due = 'monthly';
+                }
             }
         },
         created() {
             axios.get('/fundsCenters/get').then(response => {
                 let array = [];
                 let i;
+                let prof;
                 for (i = 0; i < response.data[0].length; i++) {
-                    array[i] = {
-                        text: response.data[0][i]['description'],
-                        value: response.data[0][i]['id'],
-                        disabled: false
-                    };
+                    prof = response.data[0][i]['professor']
+                    console.log(prof)
+                    if(prof === null){
+                        prof = ''
+                    }else{
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {text: response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'] + prof, value: response.data[0][i]['id'], disabled: false};
                 }
                 this.funds_options = array || [];
             }).catch(errors => {

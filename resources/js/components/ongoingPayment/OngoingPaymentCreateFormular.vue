@@ -40,8 +40,8 @@
                         <b-dropdown id="dropdown-form-end" text="Datum wählen" variant="bg-white" ref="dropdown" style="width: 100% !important; border: 1px solid #ced4da; border-radius: 0.25rem;">
                             <b-dropdown-form class="d-flex align-items-start">
                                 <b-form-group label="Semester">
-                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="03-31">Sommersemester</b-form-radio>
-                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="09-30">Wintersemester</b-form-radio>
+                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="09-30">Sommersemester</b-form-radio>
+                                    <b-form-radio v-model="endDate" @submit.prevent @change="changeEndDateText" value="03-31">Wintersemester</b-form-radio>
                                 </b-form-group>
 
                                 <b-dropdown-divider></b-dropdown-divider>

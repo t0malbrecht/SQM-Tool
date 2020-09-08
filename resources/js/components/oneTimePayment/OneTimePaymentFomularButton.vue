@@ -4,7 +4,7 @@
     <b-modal size="lg" id="select-formular" title="Formular auswählen">
         <b-button variant="outline-primary" @click="tranferFormular">Antrag auf Budgetumbuchung</b-button>
         <b-button variant="outline-primary" @click="bskFormular">Beschluss der Studienkommission</b-button>
-        <b-button :hidden="vnFormularButtonHidden" variant="outline-primary" @click="vnFormular">Verwendungsnachweis</b-button>
+        <b-button variant="outline-primary" @click="vnFormular">Verwendungsnachweis</b-button>
         <template v-slot:modal-footer="">
             <b></b>
         </template>

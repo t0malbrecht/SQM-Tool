@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\OneTimePayment;
+use App\OngoingPayment;
 use Illuminate\Http\Request;
 use mikehaertl\pdftk\Pdf;
 
@@ -11,10 +12,6 @@ class OneTimePaymentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    public function index(){
-        return view('oneTimePayment.index');
     }
 
     public function create(){
@@ -53,11 +50,16 @@ class OneTimePaymentController extends Controller
     }
 
     public function serveOneTimePayment(Request $request){
+        $find = htmlspecialchars($request->input('find'));
         $filter = htmlspecialchars($request->input('filter'));
         $sortBy = htmlspecialchars($request->input('sortBy'));
         $perPage = htmlspecialchars($request->input('perPage'));
         $startDate = htmlspecialchars($request->input('startDate'));
         $endDate = htmlspecialchars($request->input('endDate'));
+
+        if($find != 'null' && $find != null){
+            return OneTimePayment::with(['favoredFundsCenter','chargedFundsCenter', 'claim', 'costType'])->find($find);
+        }
 
         $sortWay = 'asc';
         if($request->input('sortDesc') == 'true')
@@ -199,5 +201,18 @@ class OneTimePaymentController extends Controller
                 ', SKII/' . $oneTimePayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
             'start' => $germanDateFormat,
         ])->needAppearances()->send();
+    }
+
+    public function delete(OneTimePayment $oneTimePayment){
+        if(sizeof($oneTimePayment->proofOfUses) == 0){
+            try {
+                $oneTimePayment->delete();
+            } catch (\Exception $e) {
+                return response()->json(null, 423);
+            }
+            return response()->json(null, 200);
+        }else{
+            return response()->json(null, 412);
+        }
     }
 }

@@ -21,8 +21,13 @@ class GrantedClaim extends Model
         return $this->belongsTo(CostType::class, 'costType_id');
     }
 
-    public function proofOfUse()
+    public function proofOfUses()
     {
-        return $this->hasMany(ProofOfUse::class);
+        return $this->hasMany(ProofOfUse::class, 'grantedClaim_id');
+    }
+
+    public function claim()
+    {
+        return $this->belongsTo(Claim::class, 'claim_id');
     }
 }

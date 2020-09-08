@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProofOfUse extends Model
 {
-    public function oneTimePayment()
+    public function grantedClaim()
     {
-        return $this->belongsTo(GrantedClaim::class);
+        return $this->belongsTo(GrantedClaim::class, 'grantedClaim_id');
     }
 }

@@ -37,12 +37,11 @@ Vue.component('sqmpayment-index-table', require('./components/sqmPayment/SqmPaym
 
 Vue.component('onetimepayment-create-formular', require('./components/oneTimePayment/OneTimePaymentCreateFormular.vue').default);
 Vue.component('onetimepayment-edit-formular', require('./components/oneTimePayment/OneTimePaymentEditFormular.vue').default);
-Vue.component('onetimepayment-index-table', require('./components/oneTimePayment/OneTimePaymentIndexTable.vue').default);
+Vue.component('onetimepayment-edit-button', require('./components/oneTimePayment/OneTimePaymentEditButton.vue').default);
 Vue.component('onetimepayment-forumlar-button', require('./components/oneTimePayment/OneTimePaymentFomularButton.vue').default);
 
 Vue.component('ongoingpayment-create-formular', require('./components/ongoingPayment/OngoingPaymentCreateFormular.vue').default);
 Vue.component('ongoingpayment-edit-formular', require('./components/ongoingPayment/OngoingPaymentEditFormular.vue').default);
-Vue.component('ongoingpayment-index-table', require('./components/ongoingPayment/OngoingPaymentIndexTable.vue').default);
 Vue.component('ongoingpayment-edit-button', require('./components/ongoingPayment/OngoingPaymentEditButton.vue').default);
 Vue.component('ongoingpayment-forumlar-button', require('./components/ongoingPayment/OngoingPaymentFomularButton.vue').default);
 
@@ -58,6 +57,8 @@ Vue.component('clickable-blop', require('./components/ClickableBlop.vue').defaul
 Vue.component('onetime-or-ongoingpayment-picker', require('./components/OneTimeOrOgoingPaymentPicker.vue').default);
 
 Vue.component('planning-table', require('./components/planning/PlanningTable.vue').default);
+
+Vue.component('delete-confirmation', require('./components/DeleteConfirmation.vue').default);
 
 
 /**

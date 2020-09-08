@@ -5,7 +5,10 @@
         <div class="row">
             <div class="col-9 pt-5">
                 <div class="d-flex">
-                    <h1 class="pb-2">Einmalzahlung</h1>
+                    <div class="d-flex">
+                        <h1 class="pb-2">Einmalzahlung</h1>
+                        <onetimepayment-edit-button v-bind:onetimepayment={{$oneTimePayment->id}}></onetimepayment-edit-button>
+                    </div>
                 </div>
                 <div>
                     <div class="pr-5">

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <form action="/personalData/{{$user->id}}" enctype="multipart/form-data" method="post">
+        <form action="/personalData/{{$personalData->id}}" enctype="multipart/form-data" method="post">
             @csrf
             @method('PATCH')
 
@@ -20,7 +20,7 @@
                             type="text"
                             class="form-control @error('firstname') is-invalid @enderror"
                             name="firstname"
-                            value="{{ old('firstname') ?? $user->personalData->firstname }}" autocomplete="firstname">
+                            value="{{ old('firstname') ?? $personalData->firstname }}" autocomplete="firstname">
 
                         @error('firstname')
                         <span class="invalid-feedback" role="alert">
@@ -35,7 +35,7 @@
                             type="text"
                             class="form-control @error('lastname') is-invalid @enderror"
                             name="lastname"
-                            value="{{ old('lastname') ?? $user->personalData->lastname }}" autocomplete="lastname">
+                            value="{{ old('lastname') ?? $personalData->lastname }}" autocomplete="lastname">
 
                         @error('lastname')
                         <span class="invalid-feedback" role="alert">
@@ -51,7 +51,7 @@
                             type="text"
                             class="form-control @error('number') is-invalid @enderror"
                             name="number"
-                            value="{{ old('number') ?? $user->personalData->number}}" autocomplete="number">
+                            value="{{ old('number') ?? $personalData->number}}" autocomplete="number">
 
                         @error('number')
                         <span class="invalid-feedback" role="alert">

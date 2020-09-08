@@ -15,7 +15,7 @@ class CreatePersonalDataTable extends Migration
     {
         Schema::create('personal_data', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->string('firstname');
             $table->string('lastname');
             $table->string('email');

@@ -116,7 +116,6 @@
                 pageOptions: [10, 25, 50],
                 perPage: 10,
                 currentlySelectedItem: null,
-                combinedError: ''
             }
         },
         methods: {

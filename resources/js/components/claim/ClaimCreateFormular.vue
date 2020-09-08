@@ -120,11 +120,9 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
-                                this.errors = errors.response.data.errors || {};
+                            if (errors.response.status === 423) {
+                                this.combinedError = "Datenbankfehler";
                             }
-                            console.log(errors);
-                            console.log(errors.response.message)
                         });
                 }
             }

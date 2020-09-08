@@ -10,9 +10,4 @@ class OneTimePayment extends GrantedClaim
         'claim_id', 'favoredFundsCenter_id', 'chargedFundsCenter_id', 'grantedFunds', 'spentFunds', 'spentDate', 'notes', 'costType_id', 'requirements', 'dueDate',
     ];
 
-    public function claim()
-    {
-        return $this->belongsTo(Claim::class, 'claim_id');
-    }
-
 }

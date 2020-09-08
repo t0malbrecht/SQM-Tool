@@ -16,7 +16,7 @@ class CreateCostTypesTable extends Migration
         Schema::create('cost_types', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name');
+            $table->string('name')->unique();
         });
     }
 

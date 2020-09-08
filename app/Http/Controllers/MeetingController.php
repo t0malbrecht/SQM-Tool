@@ -32,9 +32,7 @@ class MeetingController extends Controller
         if($request->input('sortDesc') == 'true')
             $sortWay = 'desc';
 
-        $query = Meeting::Select(['id','date', 'number']);
-        if($filter != 'null' && $filter != null)
-            $query->where('number', 'like', '%'.$filter.'%');
+        $query = Meeting::Select(['id','date']);
         if($startDate != 'null' && $startDate != null)
             $query->where('date', '>=', $startDate);
         if($endDate != 'null' && $endDate != null)
@@ -56,18 +54,16 @@ class MeetingController extends Controller
     public function store(){
         $data = request()->validate([
             'date' => 'required|date',
-            'number' => 'required|numeric',
         ]);
 
         try{
             $meeting =  Meeting::create([
                 'date' => $data['date'],
-                'number' => $data['number'],
             ]);
 
             $meeting->save();
         }catch(QueryException $e){
-            return response()->json(null, 433);
+            return response()->json(null, 423);
         }
 
         return response()->json(null, 200);
@@ -77,18 +73,15 @@ class MeetingController extends Controller
 
         $data = request()->validate([
             'date' => 'required|date',
-            'number' => 'required|numeric',
         ]);
 
         try{
         $meeting->update([
             'date' => $data['date'],
-            'number' => $data['number']
         ]);
         }catch(QueryException $e){
-            return response()->json(null, 433);
+            return response()->json(null, 422);
         }
-
         return response()->json(null, 200);
     }
 
@@ -98,5 +91,18 @@ class MeetingController extends Controller
 
     public function edit(Meeting $meeting){
         return view('meetings.edit', compact('meeting'));
+    }
+
+    public function delete(Meeting $meeting){
+        if(sizeof($meeting->claims) == 0){
+            try {
+                $meeting->delete();
+            } catch (\Exception $e) {
+                return response()->json(null, 423);
+            }
+            return response()->json(null, 200);
+        }else{
+            return response()->json(null, 412);
+        }
     }
 }

@@ -1,12 +1,12 @@
 <template>
     <div>
-        <b-modal id="modal-2" title="Sitzung hinzufügen">
+        <b-modal id="modal-2" size="lg" title="Sitzung hinzufügen">
             <meeting-create-formular @closeModal="closeAddModal"></meeting-create-formular>
             <template v-slot:modal-footer="">
                 <b></b>
             </template>
         </b-modal>
-        <b-modal id="modal-1" title="Sitzung bearbeiten">
+        <b-modal id="modal-1" size="lg" title="Sitzung bearbeiten">
             <meeting-edit-formular @closeModal="closeEditModal" v-bind:meeting="currentlySelectedItem"></meeting-edit-formular>
             <template v-slot:modal-footer="">
                 <b></b>

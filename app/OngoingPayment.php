@@ -14,9 +14,4 @@ class OngoingPayment extends GrantedClaim
     {
         return $this->hasMany(OngoingPaymentHistory::class);
     }
-
-    public function claim()
-    {
-        return $this->belongsTo(Claim::class, 'claim_id');
-    }
 }

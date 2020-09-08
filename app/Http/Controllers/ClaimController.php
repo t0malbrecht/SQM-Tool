@@ -17,14 +17,16 @@ class ClaimController extends Controller
         $data = request()->validate([
             'meeting_id' => 'required|numeric',
             'title' => 'required|max:255',
-            'ioa' => 'required',
+            'ioa' => 'required|numeric',
             'printNumber' => 'required|numeric',
             'claimant' => 'required',
             'document' => 'required|mimes:pdf',
             'decided' => ''
         ]);
 
-        if($data['decided'] == 'true'){
+        $data['decided'] = $data['decided'] ?? false;
+
+        if($data['decided'] == 'true' ?? $data['decided'] = false){
             $data['decided'] = true;
         }else{
             $data['decided'] = false;
@@ -41,7 +43,7 @@ class ClaimController extends Controller
                 'claimant' => $data['claimant'],
                 'meeting_id' => $data['meeting_id'],
                 'document' => $upload_path,
-                'decided' => $data['decided']
+                'decided' => $data['decided'] ?? false
             ]);
             $claim->save();
         }catch (QueryException $ex){
@@ -130,5 +132,18 @@ class ClaimController extends Controller
         }
 
         return response()->json(null, 200);
+    }
+
+    public function delete(Claim $claim){
+        if($claim->oneTimePayment == null && $claim->ongoingPayment == null){
+            try {
+                $claim->delete();
+            } catch (\Exception $e) {
+                return response()->json(null, 423);
+            }
+            return response()->json(null, 200);
+        }else{
+            return response()->json(null, 412);
+        }
     }
 }

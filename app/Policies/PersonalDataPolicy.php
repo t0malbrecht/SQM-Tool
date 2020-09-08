@@ -30,7 +30,7 @@ class PersonalDataPolicy
      */
     public function view(User $user, PersonalData $personalData)
     {
-        //
+        return auth()->user()->id == $personalData->user_id;
     }
 
     /**
@@ -53,43 +53,8 @@ class PersonalDataPolicy
      */
     public function update(User $user, PersonalData $personalData)
     {
-        return true;
         return auth()->user()->id == $personalData->user_id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\PersonalData  $personalData
-     * @return mixed
-     */
-    public function delete(User $user, PersonalData $personalData)
-    {
-        //
-    }
 
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\PersonalData  $personalData
-     * @return mixed
-     */
-    public function restore(User $user, PersonalData $personalData)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\PersonalData  $personalData
-     * @return mixed
-     */
-    public function forceDelete(User $user, PersonalData $personalData)
-    {
-        //
-    }
 }

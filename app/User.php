@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password',
+        'username', 'email', 'password', 'role'
     ];
 
     /**
@@ -40,6 +40,10 @@ class User extends Authenticatable
     public function personalData()
     {
         return $this->hasOne(PersonalData::class, 'user_id');
+    }
+
+    public function isStudiendekan(){
+        return $this->role == 0;
     }
 
 

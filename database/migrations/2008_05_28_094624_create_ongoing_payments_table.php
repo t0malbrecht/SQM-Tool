@@ -16,11 +16,11 @@ class CreateOngoingPaymentsTable extends Migration
         Schema::create('ongoing_payments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('claim_id');
+            $table->unsignedBigInteger('claim_id')->unique();
             $table->unsignedBigInteger('favoredFundsCenter_id');
             $table->unsignedBigInteger('chargedFundsCenter_id');
             $table->unsignedBigInteger('costType_id');
-            $table->smallInteger('grantedFunds');
+            $table->integer('grantedFunds');
             $table->date('plannedStartDate');
             $table->date('plannedEndDate');
             $table->string('notes', 500)->nullable();

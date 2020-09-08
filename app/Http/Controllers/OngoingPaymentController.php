@@ -20,11 +20,6 @@ class OngoingPaymentController extends Controller
     {
         $this->middleware('auth');
     }
-
-    public function index(){
-        return view('ongoingPayment.index');
-    }
-
     public function show(OngoingPayment $ongoingPayment){
         return view('ongoingPayment.show', compact('ongoingPayment'));
     }
@@ -109,7 +104,7 @@ class OngoingPaymentController extends Controller
     }
 
     private function createPaymentHistories($data, $ongoingPayment){
-        // ToDo: Weihnachtsgeldberechnung einfügen
+        // ToDo: Weihnachtsgeldberechnung jetzt einfach doppeltes Gehalt im Oktober, richtig so?
 
         $startDate = new DateTime($data['plannedStartDate']);
         $endDate = new DateTime($data['plannedEndDate']);
@@ -131,21 +126,22 @@ class OngoingPaymentController extends Controller
         }
         foreach ($period as $dt) {
             $plannedPaymentDate = ($dt->format("Y-m-d"));
-            $ongoingPayment->ongoingPaymentHistories()->create([
-                'claim_id' => $data['claim_id'],
-                'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
-                'grantedFunds' => $data['grantedFunds'],
-                'plannedPaymentDate' => $plannedPaymentDate,
-            ]);
             $dontCalculateChristmasBonus = $data['christmasBonus'] ?? false;
             if($dt->format("n") == 10 && $due == 'monthly' && !$dontCalculateChristmasBonus){
                     $ongoingPayment->ongoingPaymentHistories()->create([
                         'claim_id' => $data['claim_id'],
                         'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
-                        'grantedFunds' => $data['grantedFunds'],
+                        'grantedFunds' => $data['grantedFunds']*2,
                         'plannedPaymentDate' => $plannedPaymentDate,
                     ]);
-                }
+                }else{
+                $ongoingPayment->ongoingPaymentHistories()->create([
+                    'claim_id' => $data['claim_id'],
+                    'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
+                    'grantedFunds' => $data['grantedFunds'],
+                    'plannedPaymentDate' => $plannedPaymentDate,
+                ]);
+            }
             }
     }
 
@@ -286,6 +282,19 @@ class OngoingPaymentController extends Controller
                 ', SKII/' . $ongoingPayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
             'start' => $germanDateFormat,
         ])->needAppearances()->send();
+    }
+
+    public function delete(OngoingPayment $ongoingPayment){
+        if(sizeof($ongoingPayment->proofOfUses) == 0 && sizeof($ongoingPayment->ongoingPaymentHistories) == 0){
+            try {
+                $ongoingPayment->delete();
+            } catch (\Exception $e) {
+                return response()->json(null, 423);
+            }
+            return response()->json(null, 200);
+        }else{
+            return response()->json(null, 412);
+        }
     }
 
 }

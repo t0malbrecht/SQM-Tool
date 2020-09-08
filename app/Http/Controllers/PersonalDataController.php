@@ -15,19 +15,17 @@ class PersonalDataController extends Controller
         $this->middleware('auth');
     }
 
-    public function show(User $user)
+    public function show(PersonalData $personalData)
     {
-        return view('personalData.show', compact('user'));
+        return view('personalData.show', compact('personalData'));
     }
 
 
-    public function edit(User $user){
-        $this->authorize('update', $user->personalData);
-        return view('personalData.edit', compact('user'));
+    public function edit(PersonalData $personalData){
+        return view('personalData.edit', compact('personalData'));
     }
 
-    public function update(User $user){
-        $this->authorize('update',$user->personalData);
+    public function update(PersonalData $personalData){
         $data = request()->validate([
             'firstname' => 'required',
             'lastname' => 'required',

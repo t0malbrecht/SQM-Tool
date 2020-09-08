@@ -19,7 +19,7 @@ class CreateProofOfUsesTable extends Migration
             $table->unsignedBigInteger('grantedClaim_id');
             $table->string('submitter');
             $table->date('submitDate');
-            $table->string('document');
+            $table->string('document')->unique();
         });
     }
 

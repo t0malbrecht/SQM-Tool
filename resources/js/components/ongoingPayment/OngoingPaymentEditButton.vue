@@ -1,7 +1,7 @@
 <template>
     <div>
     <img src="/svg/edit.svg" style="height: 20px;" class="pl-2" @click="edit">
-    <b-modal size="lg" id="edit-meeting" title="Sitzung bearbeiten">
+    <b-modal size="lg" id="edit-payment" title="Zahlung bearbeiten">
         <ongoingpayment-edit-formular @closeModal="closeModal" v-bind:payment="payment"></ongoingpayment-edit-formular>
         <template v-slot:modal-footer="">
             <b></b>
@@ -23,14 +23,14 @@
                 let promise = axios.get('/ongoingPayments/get?find=' + this.ongoingpayment)
                 return promise.then(response => {
                     this.payment = response.data || [];
-                    this.$bvModal.show('edit-meeting');
+                    this.$bvModal.show('edit-payment');
                 })
                     .catch(errors => {
                         console.log(errors)
                     });
             },
             closeModal() {
-                this.$bvModal.hide('edit-meeting');
+                this.$bvModal.hide('edit-payment');
             }
         }
     }

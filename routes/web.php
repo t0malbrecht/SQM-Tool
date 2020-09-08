@@ -20,13 +20,14 @@ Auth::routes(['register' => false]);
 Route::get('/', 'HomeController@index')->name('home');
 
 #PersonalData
-Route::get('/personalData/{user}', 'PersonalDataController@show')->name('personalData.show');
-Route::get('/personalData/{user}/edit', 'PersonalDataController@edit')->name('personalData.edit');
-Route::patch('/personalData/{user}', 'PersonalDataController@update')->name('personalData.update');
+Route::get('/personalData/{personalData}', 'PersonalDataController@show')->name('personalData.show')->middleware('can:view,personalData');
+Route::get('/personalData/{personalData}/edit', 'PersonalDataController@edit')->name('personalData.edit')->middleware('can:update,personalData');
+Route::patch('/personalData/{personalData}', 'PersonalDataController@update')->name('personalData.update')->middleware('can:update,personalData');
 
 #Meeting
 Route::get('/meeting/create', 'MeetingController@create')->name('meeting.create');
 Route::get('/meeting/{meeting}', 'MeetingController@show')->name('meeting.show');
+Route::delete('/meeting/{meeting}', 'MeetingController@delete')->name('meeting.delete');
 Route::patch('/meeting/{meeting}', 'MeetingController@update')->name('meeting.update');
 Route::get('/meetings/', 'MeetingController@index')->name('meeting.index');
 Route::get('/meetings/get', 'MeetingController@serveMeetings')->name('meeting.serveMeetings');
@@ -43,6 +44,7 @@ Route::post('/fundsCenter', 'FundsCenterController@store')->name('fundsCenter.st
 #OneTimePayment
 Route::get('/oneTimePayment/create', 'OneTimePaymentController@create')->name('oneTimePayment.create');
 Route::get('/oneTimePayment/{oneTimePayment}', 'OneTimePaymentController@show')->name('oneTimePayment.show');
+Route::delete('/oneTimePayment/{oneTimePayment}', 'OneTimePaymentController@delete')->name('oneTimePayment.delete');
 Route::patch('/oneTimePayment/{oneTimePayment}', 'OneTimePaymentController@update')->name('oneTimePayment.update');
 Route::get('/oneTimePayments/', 'OneTimePaymentController@index')->name('oneTimePayment.index');
 Route::get('/oneTimePayments/get', 'OneTimePaymentController@serveOneTimePayment')->name('oneTimePayment.serveOneTimePayment');
@@ -57,6 +59,7 @@ Route::get('/ongoingPayment/createTransferFormular', 'OngoingPaymentController@c
 Route::get('/ongoingPayment/createBskFormular', 'OngoingPaymentController@createBskFormular')->name('ongoingPayment.createBskFormular');
 Route::get('/ongoingPayment/createVnFormular/{ongoingPayment}', 'OngoingPaymentController@createVnFormular')->name('ongoingPayment.createVnFormular');
 Route::get('/ongoingPayment/{ongoingPayment}', 'OngoingPaymentController@show')->name('ongoingPayment.show');
+Route::delete('/ongoingPayment/{ongoingPayment}', 'OngoingPaymentController@delete')->name('ongoingPayment.delete');
 Route::patch('/ongoingPayment/{ongoingPayment}', 'OngoingPaymentController@update')->name('ongoingPayment.update');
 Route::get('/ongoingPayments/', 'OngoingPaymentController@index')->name('ongoingPayment.index');
 Route::get('/ongoingPayments/get', 'OngoingPaymentController@serveOngoingPayment')->name('ongoingPayment.serveOngoingPayment');
@@ -77,6 +80,7 @@ Route::post('/sqmPayment', 'SqmPaymentController@store')->name('sqmPayment.store
 
 #Claim
 Route::get('/claim/{claim}', 'ClaimController@show')->name('claim.show');
+Route::delete('/claim/{claim}', 'ClaimController@delete')->name('claim.delete');
 Route::patch('/claim/{claim}', 'ClaimController@update')->name('claim.update');
 Route::get('/claims/get', 'ClaimController@serveClaims')->name('claim.serveClaims');
 Route::post('/claim', 'ClaimController@store')->name('claim.store');

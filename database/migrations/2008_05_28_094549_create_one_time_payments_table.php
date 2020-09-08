@@ -20,8 +20,8 @@ class CreateOneTimePaymentsTable extends Migration
             $table->unsignedBigInteger('favoredFundsCenter_id');
             $table->unsignedBigInteger('chargedFundsCenter_id');
             $table->unsignedBigInteger('costType_id');
-            $table->smallInteger('grantedFunds');
-            $table->smallInteger('spentFunds')->nullable();
+            $table->integer('grantedFunds');
+            $table->integer('spentFunds')->nullable();
             $table->date('spentDate')->nullable();
             $table->string('notes', 500)->nullable();
             $table->string('requirements', 500)->nullable();

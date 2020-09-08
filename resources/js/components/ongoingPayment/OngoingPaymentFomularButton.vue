@@ -54,6 +54,7 @@
                 bskFormularButtonHidden: false,
                 vnFormularButtonHidden: false,
                 submitButtonHidden: true,
+                errors: {},
                 title: 'Formular auswählen'
             }
         },

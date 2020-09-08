@@ -16,7 +16,6 @@ class CreateMeetingsTable extends Migration
         Schema::create('meetings', function (Blueprint $table) {
             $table->id();
             $table->date('date')->unique();
-            $table->smallInteger('number');
             $table->timestamps();
         });
     }

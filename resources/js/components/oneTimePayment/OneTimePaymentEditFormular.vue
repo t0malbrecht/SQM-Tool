@@ -75,7 +75,7 @@
             </b-form-group>
             <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="chargedFundsCenter_id">
                 <b-form-select v-model="form.chargedFundsCenter_id" id="chargedFundsCenter_id"
-                               :options="funds_options"></b-form-select>
+                               :options="charged_funds_options"></b-form-select>
                 <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
                     this.errors.chargedFundsCenter_id[0] }}
                 </div>
@@ -107,8 +107,21 @@
                     }}
                 </div>
             </b-form-group>
-            <b-button type="submit" variant="primary">Speichern</b-button>
+            <div class="row d-flex pl-3 pt-3">
+                <b-button type="submit" variant="primary" class="mr-auto ml-0">Speichern</b-button>
+                <b-button type="button" variant="primary" class="ml-auto mr-3" @click.prevent="showDeleteDialog">Löschen</b-button>
+            </div>
         </b-form>
+    <hr/>
+    <div class="text-center">
+        <div v-if="this.otherError" class="text-danger pl-5">{{ this.otherError }}</div>
+    </div>
+    <b-modal id="delete-dialog" size="lg" title="Überprüfung">
+        <delete-confirmation @closeModal="hideDeleteDialog" @delete="deleteItem"></delete-confirmation>
+        <template v-slot:modal-footer="">
+            <b></b>
+        </template>
+    </b-modal>
     </div>
 </template>
 
@@ -119,11 +132,12 @@
             return {
                 form: {},
                 errors: {},
-                combinedError: '',
+                otherError: '',
                 success: false,
                 loaded: true,
                 claim_options: [],
                 funds_options: [],
+                charged_funds_options: [],
                 costType_options: [],
             }
         },
@@ -134,7 +148,6 @@
                 let prof;
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
-                    console.log(prof)
                     if(prof === null){
                         prof = ''
                     }else{
@@ -174,6 +187,26 @@
                 this.form.requirements = this.payment.requirements;
             }).catch(errors => {
             });
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                let prof;
+                for (i = 0; i < response.data[0].length; i++) {
+                    prof = response.data[0][i]['professor']
+                    console.log(prof)
+                    if (prof === null) {
+                        prof = ''
+                    } else {
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {
+                        text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
+                        value: response.data[0][i]['id'],
+                        disabled: false
+                    };
+                }
+                this.charged_funds_options = array;
+            }).catch(errors => {console.log(errors)});
         },
         methods: {
             onSubmit() {
@@ -181,6 +214,7 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
+                    this.otherError = '';
                     axios.patch('/oneTimePayment/'+this.payment.id, this.form)
                         .then(response => {
                             this.fields = {}; //Clear input fields.
@@ -201,6 +235,34 @@
                             console.log(errors)
                         });
                 }
+            },
+            showDeleteDialog(){
+                this.$bvModal.show('delete-dialog');
+            },
+            hideDeleteDialog(){
+                this.$bvModal.hide('delete-dialog');
+            },
+            deleteItem(){
+                axios.delete('/oneTimePayment/'+this.payment.id) .then(response => {
+                    this.$emit('closeModal');
+                    if(window.location.href.split('/')[3] === 'oneTimePayment'){
+                        console.log('close')
+                        window.close()
+                    }
+                    this.$root.$emit('bv::refresh::table', 't1');
+                })
+                    .catch(errors => {
+                        this.loaded = true;
+                        if (errors.response.status == 401) {
+                            window.location = '/login';
+                        }
+                        if (errors.response.status === 423) {
+                            this.otherError = "Datenbankfehler";
+                        }
+                        if (errors.response.status === 412) {
+                            this.otherError = 'Konnte nicht gelöscht werden: Es ist noch ein Verwendungsnachweis mit der Zahlung verknüpft';
+                        }
+                    });
             }
         }
     }

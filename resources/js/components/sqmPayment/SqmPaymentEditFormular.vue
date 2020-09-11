@@ -47,8 +47,21 @@
                 <div v-if="this.errors && this.errors.fundsCenter" class="text-danger">{{ this.errors.fundsCenter[0] }}</div>
             </b-form-group>
 
-            <b-button type="submit" variant="primary">Speichern</b-button>
+            <div class="row d-flex pl-3 pt-3">
+                <b-button type="submit" variant="primary" class="mr-auto ml-0">Speichern</b-button>
+                <b-button type="button" variant="primary" class="ml-auto mr-3" @click.prevent="showDeleteDialog">Löschen</b-button>
+            </div>
         </b-form>
+        <hr/>
+        <div class="text-center">
+            <div v-if="this.otherError" class="text-danger pl-5">{{ this.otherError }}</div>
+        </div>
+        <b-modal id="delete-dialog" size="lg" title="Überprüfung">
+            <delete-confirmation @closeModal="hideDeleteDialog" @delete="deleteItem"></delete-confirmation>
+            <template v-slot:modal-footer="">
+                <b></b>
+            </template>
+        </b-modal>
     </div>
 </template>
 
@@ -59,14 +72,14 @@
             return {
                 form: {},
                 errors: {},
-                combinedError: '',
+                otherError: '',
                 success: false,
                 loaded: true,
                 options: []
             }
         },
         created() {
-            axios.get('/fundsCenters/get').then(response => {
+            axios.get('/fundsCenters/get?level=0').then(response => {
                 let array = [];
                 let i;
                 for (i=0; i<response.data[0].length; i++) {
@@ -85,6 +98,7 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
+                    this.otherError = '';
                     axios.patch('/sqmPayment/'+this.sqmPayment.id, this.form)
                         .then(response => {
                             this.fields = {}; //Clear input fields.
@@ -103,6 +117,33 @@
                             }
                         });
                 }
+            },
+            showDeleteDialog(){
+                this.$bvModal.show('delete-dialog');
+            },
+            hideDeleteDialog(){
+                this.$bvModal.hide('delete-dialog');
+            },
+            deleteItem(){
+                axios.delete('/sqmPayment/'+this.sqmPayment.id) .then(response => {
+                    this.$emit('closeModal');
+                    if(window.location.href.split('/')[3] === 'sqmPayment'){
+                        window.close()
+                    }
+                    this.$root.$emit('bv::refresh::table', 't1');
+                })
+                    .catch(errors => {
+                        this.loaded = true;
+                        if (errors.response.status == 401) {
+                            window.location = '/login';
+                        }
+                        if (errors.response.status === 423) {
+                            this.otherError = "Datenbankfehler";
+                        }
+                        if (errors.response.status === 412) {
+                            this.otherError = 'Konnte nicht gelöscht werden: Es sind noch Zahlungen oder Verwendungsnachweise mit der Zahlung verknüpft';
+                        }
+                    });
             }
         }
     }

@@ -1,14 +1,23 @@
 <template>
     <div>
-        <b-modal id="modal-1" title="Sitzung bearbeiten">
-            <sqmpayment-edit-formular @closeModal="closeModal" v-bind:sqmPayment="currentlySelectedItem"></sqmpayment-edit-formular>
+        <b-modal id="modal-2" size="lg" title="SQM-Zahlung hinzufügen">
+            <sqmpayment-create-formular @closeModal="closeAddModal"></sqmpayment-create-formular>
+            <template v-slot:modal-footer="">
+                <b></b>
+            </template>
+        </b-modal>
+        <b-modal id="modal-1" size="lg" title="SQM-Zahlung bearbeiten">
+            <sqmpayment-edit-formular size="lg" @closeModal="closeEditModal" v-bind:sqmPayment="currentlySelectedItem"></sqmpayment-edit-formular>
             <template v-slot:modal-footer="">
                 <b></b>
             </template>
         </b-modal>
         <div class="row pb-2m align-items-end">
             <div class="col-8">
-                <h2 class="pb-2">SQM-Zahlungen</h2>
+                <div class="d-flex">
+                    <h2 class="pb-2">SQM-Zahlungen</h2>
+                    <img src="/svg/add.svg" style="height: 20px;" class="pl-2" @click="add">
+                </div>
                 <b-form-group>
                     <b-input-group size="sm">
                         <b-form-input
@@ -109,7 +118,10 @@
                     if(ctx.filter != null || this.startDate != null || this.endDate != null)
                         this.currentPage = 1;
                     this.totalRows = response.data[1]*this.perPage
-                    response.data[0][0].funds_center_description = response.data[0][0].funds_center.description;
+                    let i;
+                    for (i = 0; i < response.data[0].length; i++) {
+                        response.data[0][i].funds_center_description = response.data[0][i].funds_center.description;
+                    }
                     return response.data[0] || [];
                 })
                     .catch(errors => {
@@ -119,8 +131,14 @@
                 this.currentlySelectedItem = item;
                 this.$bvModal.show('modal-1');
             },
-            closeModal(){
+            add(){
+                this.$bvModal.show('modal-2');
+            },
+            closeEditModal(){
                 this.$bvModal.hide('modal-1');
+            },
+            closeAddModal(){
+                this.$bvModal.hide('modal-2');
             }
         }
     }

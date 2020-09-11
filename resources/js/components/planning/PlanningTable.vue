@@ -29,17 +29,8 @@
         </div>
         <div class="row pb-2m align-items-end">
             <div class="col-8">
-                <h2 class="pb-2">Einmalzahlungen</h2>
-                <b-form-group>
-                    <b-input-group size="sm">
-                        <b-form-input
-                            v-model="filter"
-                            type="search"
-                            id="filterInput"
-                            placeholder="Suchbegriff eingeben"
-                        ></b-form-input>
-                    </b-input-group>
-                </b-form-group>
+                <h2 class="pb-2">Planungsübersicht</h2>
+                    <b-form-select v-model="chargedFundsCenter" id="chargedFundsCenter" @input="$root.$emit('bv::refresh::table', 't1')" :options="options"></b-form-select>
             </div>
             <div class="col-2">
                 <label>Von:</label>
@@ -70,7 +61,6 @@
                  :fields="fields"
                  :sort-by.sync="sortBy"
                  :sort-desc.sync="sortDesc"
-                 :filter="filter"
                  sort-icon-left
                  responsive="sm"
                  :no-sort-reset=true
@@ -98,40 +88,6 @@
                 </b-card>
             </template>
         </b-table>
-        <div class="row">
-            <div class="col-4">
-                <b-form-group
-                    label="Per page"
-                    label-cols-sm="6"
-                    label-cols-md="4"
-                    label-cols-lg="3"
-                    label-align-sm="right"
-                    label-size="sm"
-                    label-for="perPageSelect"
-                    class="mb-0"
-                >
-                    <b-form-select
-                        v-model="perPage"
-                        @input="$root.$emit('bv::refresh::table', 't1')"
-                        id="perPageSelect"
-                        size="sm"
-                        :options="pageOptions"
-                    ></b-form-select>
-                </b-form-group>
-            </div>
-            <div class="col-8">
-                <b-pagination
-                    v-model="currentPage"
-                    @input="$root.$emit('bv::refresh::table', 't1')"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                    limit="3"
-                ></b-pagination>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -152,12 +108,8 @@
                 ],
                 startDate: null,
                 endDate: null,
-                filter: null,
+                chargedFundsCenter: null,
                 items: null,
-                currentPage: 1,
-                totalRows: 1,
-                pageOptions: [10, 25, 50],
-                perPage: 10,
                 currentlySelectedItem: null,
                 result: [],
                 allAllFunds: 0,
@@ -168,11 +120,35 @@
                 allGrantedFundsFormatted: null,
                 allSpentFundsFormatted: null,
                 allAvailableFundsFormatted: null,
-        }
+                options: [],
+                errors: [],
+            }
+        },
+        created() {
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                let prof;
+                for (i = 0; i < response.data[0].length; i++) {
+                    prof = response.data[0][i]['professor']
+                    console.log(prof)
+                    if (prof === null) {
+                        prof = ''
+                    } else {
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {
+                        text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
+                        value: response.data[0][i]['id'],
+                        disabled: false
+                    };
+                }
+                this.options = array;
+            }).catch(errors => {console.log(errors)});
         },
         methods: {
             myProvider(ctx) {
-                let promise = axios.get('/oneTimePayments/get?page=' + '&filter=' + ctx.filter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
+                let promise = axios.get('/oneTimePayments/get?chargedFundsCenter=' + this.chargedFundsCenter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
                 return promise.then(response => {
                     let i
                     for (i = 0; i < response.data[0].length; i++) {
@@ -188,10 +164,11 @@
                 });
             },
             myProvider2(ctx){
-                let promise2 = axios.get('/ongoingPaymentHistories/get?planning='+ 'yes' + '&filter=' + this.filter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
+                let promise2 = axios.get('/ongoingPaymentHistories/get?planning='+ 'yes' + '&chargedFundsCenter=' + this.chargedFundsCenter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
                 return promise2.then(response => {
                     let i
                     for (i = 0; i < response.data[0].length; i++) {
+                        console.log(response.data[0][i]);
                         response.data[0][i].type = 'Mehrmalszahlung'
                     }
                     this.result = this.result.concat(response.data[0]);
@@ -208,10 +185,10 @@
                     currency: 'EUR',
                     minimumFractionDigits: 0
                 })
-                    let promise = axios.get('/sqmPayments/get?filter=' + ctx.filter + '&filterOn' + this.filterOn
+                    let promise = axios.get('/sqmPayments/get?chargedFundsCenter=' + this.chargedFundsCenter
                         + '&startDate=' + this.startDate + '&endDate=' + this.endDate + '&sum=yes');
                     return promise.then(response => {
-                         this.allAllFunds = response.data[0] || 0;
+                        this.allAllFunds = response.data[0] || 0;
                         this.allAllFundsFormatted = formatter.format(this.allAllFunds);
                          console.log(this.items)
                         let i
@@ -272,7 +249,9 @@
                     window.open('/ongoingPayment/'+item.ongoing_payment_id);
                 }
             },
-
+            updateFundsCenter(){
+                this.myProvider(ctx)
+            }
         }
     }
 </script>

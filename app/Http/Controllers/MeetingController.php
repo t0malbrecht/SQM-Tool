@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Claim;
+use App\Exports\MeetingExport;
 use App\Meeting;
+use App\OneTimePayment;
+use App\OngoingPayment;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MeetingController extends Controller
 {
@@ -32,7 +37,11 @@ class MeetingController extends Controller
         if($request->input('sortDesc') == 'true')
             $sortWay = 'desc';
 
+
         $query = Meeting::Select(['id','date']);
+        if($filter != 'null' && $filter != null) {
+            $query->where('date', 'like', '%' . $filter . '%');
+        }
         if($startDate != 'null' && $startDate != null)
             $query->where('date', '>=', $startDate);
         if($endDate != 'null' && $endDate != null)
@@ -40,6 +49,7 @@ class MeetingController extends Controller
         if($perPage != 'null' && $perPage != null){
             $query->paginate($perPage);
         }
+
         $query->orderBy($sortBy, $sortWay);
         $result = $query->get();
         $lastPage = $query->paginate($perPage)->lastPage();
@@ -104,5 +114,10 @@ class MeetingController extends Controller
         }else{
             return response()->json(null, 412);
         }
+    }
+
+    public function exportXlsx(Meeting $meeting)
+    {
+        return Excel::download(new MeetingExport($meeting), 'Sitzung_'.$meeting->date.'_.xlsx');
     }
 }

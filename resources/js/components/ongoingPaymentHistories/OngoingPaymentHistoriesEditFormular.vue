@@ -28,6 +28,7 @@
                     >
                         <b-form-datepicker
                             v-model="form.realPaymentDate"
+                            reset-button
                             id="spentDate"
                             :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
                             locale="de"
@@ -65,8 +66,21 @@
                     </b-form-group>
                 </div>
             </div>
-            <b-button type="submit" variant="primary">Speichern</b-button>
+            <div class="row d-flex pl-3 pt-3">
+                <b-button type="submit" variant="primary" class="mr-auto ml-0">Speichern</b-button>
+                <b-button type="button" variant="primary" class="ml-auto mr-3" @click.prevent="showDeleteDialog">Löschen</b-button>
+            </div>
         </b-form>
+    <hr/>
+    <div class="text-center">
+        <div v-if="this.otherError" class="text-danger pl-5">{{ this.otherError }}</div>
+    </div>
+    <b-modal id="delete-dialog" size="lg" title="Überprüfung">
+        <delete-confirmation @closeModal="hideDeleteDialog" @delete="deleteItem"></delete-confirmation>
+        <template v-slot:modal-footer="">
+            <b></b>
+        </template>
+    </b-modal>
     </div>
 </template>
 
@@ -77,7 +91,7 @@
             return {
                 form: {},
                 errors: {},
-                combinedError: '',
+                otherError: '',
                 success: false,
                 loaded: true,
                 claim_options: [],
@@ -97,9 +111,9 @@
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
+                    this.otherError = '';
                     axios.patch('/ongoingPaymentHistory/'+this.ongoingPaymentHistory.id, this.form)
                         .then(response => {
-                            console.log(response.data)
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
@@ -116,6 +130,27 @@
                             }
                         });
                 }
+            },
+            showDeleteDialog(){
+                this.$bvModal.show('delete-dialog');
+            },
+            hideDeleteDialog(){
+                this.$bvModal.hide('delete-dialog');
+            },
+            deleteItem(){
+                axios.delete('/ongoingPaymentHistory/'+this.ongoingPaymentHistory.id) .then(response => {
+                    this.$emit('closeModal');
+                    this.$root.$emit('bv::refresh::table', 't1');
+                })
+                    .catch(errors => {
+                        this.loaded = true;
+                        if (errors.response.status === 401) {
+                            window.location = '/login';
+                        }
+                        if (errors.response.status === 423) {
+                            this.otherError = "Datenbankfehler";
+                        }
+                    });
             }
         }
     }

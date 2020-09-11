@@ -18,16 +18,6 @@
                     <h2 class="pb-2">Sitzungen</h2>
                     <img src="/svg/add.svg" style="height: 20px;" class="pl-2" @click="add">
                 </div>
-                <b-form-group>
-                    <b-input-group size="sm">
-                        <b-form-input
-                            v-model="filter"
-                            type="search"
-                            id="filterInput"
-                            placeholder="Suchbegriff eingeben"
-                        ></b-form-input>
-                    </b-input-group>
-                </b-form-group>
             </div>
             <div class="col-2">
                 <label>Von:</label>
@@ -58,8 +48,6 @@
                  :fields="fields"
                  :sort-by.sync="sortBy"
                  :sort-desc.sync="sortDesc"
-                 :filter="filter"
-                 :filterIncludedFields="filterOn"
                  sort-icon-left
                  responsive="sm"
                  :no-sort-reset=true
@@ -114,13 +102,10 @@
                 sortDesc: false,
                 fields: [
                     {key: 'date', label: 'Datum', sortable: true},
-                    {key: 'number', label: 'Nummer', sortable: true},
                     {key: 'actions', label: 'Aktionen' },
                 ],
                 startDate: null,
                 endDate: null,
-                filter: null,
-                filterOn: [],
                 currentPage: 1,
                 totalRows: 1,
                 pageOptions: [10, 25, 50],
@@ -131,10 +116,10 @@
         },
         methods: {
             myProvider(ctx) {
-                let promise = axios.get('/meetings/get?page=' + this.currentPage + '&perPage=' + this.perPage + '&filter=' + ctx.filter + '&filterOn' + this.filterOn + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc
+                let promise = axios.get('/meetings/get?page=' + this.currentPage + '&perPage=' + this.perPage + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc
                                         + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
                 return promise.then(response => {
-                    if(ctx.filter != null || this.startDate != null || this.endDate != null)
+                    if(this.startDate != null || this.endDate != null)
                         this.currentPage = 1;
                     this.totalRows = response.data[1]*this.perPage;
                     return response.data[0] || [];

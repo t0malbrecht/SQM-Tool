@@ -17,6 +17,7 @@ class CreateOneTimePaymentsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('claim_id')->unique();
+            $table->string('unique_payment_id')->unique()->nullable();
             $table->unsignedBigInteger('favoredFundsCenter_id');
             $table->unsignedBigInteger('chargedFundsCenter_id');
             $table->unsignedBigInteger('costType_id');

@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-modal id="modal-1" title="Mehrmalszahlung-Historie bearbeiten">
-            <ongoingpaymenthistories-edit-formular @closeModal="closeModal" v-bind:ongoingPaymentHistory="currentlySelectedItem"></ongoingpaymenthistories-edit-formular>
+            <ongoingpaymenthistories-edit-formular size="lg" @closeModal="closeModal" v-bind:ongoingPaymentHistory="currentlySelectedItem"></ongoingpaymenthistories-edit-formular>
             <template v-slot:modal-footer="">
                 <b></b>
             </template>
@@ -9,16 +9,6 @@
         <div class="row pb-2m align-items-end">
             <div class="col-8">
                 <h2 class="pb-2">Mehrmalszahlung-Historien</h2>
-                <b-form-group>
-                    <b-input-group size="sm">
-                        <b-form-input
-                            v-model="filter"
-                            type="search"
-                            id="filterInput"
-                            placeholder="Suchbegriff eingeben"
-                        ></b-form-input>
-                    </b-input-group>
-                </b-form-group>
             </div>
             <div class="col-2">
                 <label>Von:</label>
@@ -26,6 +16,7 @@
                     v-model="startDate"
                     @input="$root.$emit('bv::refresh::table', 't1')"
                     id="startDate"
+                    reset-button
                     :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
                     locale="de"
                     placeholder="Datum auswählen"
@@ -48,7 +39,6 @@
                  :items="myProvider"
                  :fields="fields"
                  :sort-desc.sync="sortDesc"
-                 :filter="filter"
                  sort-icon-left
                  responsive="sm"
                  :no-sort-reset=true
@@ -104,13 +94,12 @@
                 fields: [
                     {key: 'plannedPaymentDate', label: 'Geplantes Verausgabungsdatum', sortable: true},
                     {key: 'realPaymentDate', label: 'Tatsächliches Verausgabungsdatum', sortable: true},
-                    { key: 'grantedFunds', label: 'Beschreibung', sortable: true},
-                    { key: 'spentFunds', label: 'gewährter Betrag', sortable: true},
+                    { key: 'grantedFunds', label: 'gewährter Betrag', sortable: true},
+                    { key: 'spentFunds', label: 'verausgabter Betrag', sortable: true},
                     { key: 'actions', label: 'Aktionen' },
                 ],
                 startDate: null,
                 endDate: null,
-                filter: null,
                 currentPage: 1,
                 totalRows: 1,
                 pageOptions: [10, 25, 50],
@@ -120,8 +109,10 @@
         },
         methods: {
             myProvider(ctx) {
+                console.log('/ongoingPaymentHistories/get?page=' + this.currentPage + '&perPage=' + this.perPage + '&filter=' + ctx.filter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc
+                    + '&startDate=' + this.startDate + '&endDate=' + this.endDate+ '&chargedFundsCenter=' + this.id)
                 let promise = axios.get('/ongoingPaymentHistories/get?page=' + this.currentPage + '&perPage=' + this.perPage + '&filter=' + ctx.filter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc
-                    + '&startDate=' + this.startDate + '&endDate=' + this.endDate+ '&id=' + this.id);
+                    + '&startDate=' + this.startDate + '&endDate=' + this.endDate+ '&ongoingPayment=' + this.id);
                 return promise.then(response => {
                     console.log(response.data[0])
                     if(ctx.filter != null || this.startDate != null || this.endDate != null)

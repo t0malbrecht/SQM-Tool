@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Auth::routes(['register' => false]);
+Auth::routes(['register' => false, 'reset' => false]);
 
 Route::get('/', 'HomeController@index')->name('home');
 
@@ -27,6 +27,7 @@ Route::patch('/personalData/{personalData}', 'PersonalDataController@update')->n
 #Meeting
 Route::get('/meeting/create', 'MeetingController@create')->name('meeting.create');
 Route::get('/meeting/{meeting}', 'MeetingController@show')->name('meeting.show');
+Route::get('/meeting/exportXlsx/{meeting}', 'MeetingController@exportXlsx')->name('meeting.exportXlsx');
 Route::delete('/meeting/{meeting}', 'MeetingController@delete')->name('meeting.delete');
 Route::patch('/meeting/{meeting}', 'MeetingController@update')->name('meeting.update');
 Route::get('/meetings/', 'MeetingController@index')->name('meeting.index');
@@ -69,22 +70,38 @@ Route::post('/ongoingPayment', 'OngoingPaymentController@store')->name('ongoingP
 #OngoingPaymentHistory
 Route::patch('/ongoingPaymentHistory/{ongoingPaymentHistory}', 'OngoingPaymentHistoryController@update')->name('ongoingPaymentHistory.update');
 Route::get('/ongoingPaymentHistories/get', 'OngoingPaymentHistoryController@serveOngoingPaymentHistories')->name('ongoingPaymentHistory.serveOngoingPaymentHistories');
+Route::delete('/ongoingPaymentHistory/{ongoingPaymentHistory}', 'OngoingPaymentHistoryController@delete')->name('ongoingPaymentHistory.delete');
 
 #SqmPayment
 Route::get('/sqmPayment/create', 'SqmPaymentController@create')->name('sqmPayment.create');
 Route::get('/sqmPayment/{sqmPayment}', 'SqmPaymentController@show')->name('sqmPayment.show');
+Route::delete('/sqmPayment/{sqmPayment}', 'SqmPaymentController@delete')->name('sqmPayment.delete');
 Route::patch('/sqmPayment/{sqmPayment}', 'SqmPaymentController@update')->name('sqmPayment.update');
 Route::get('/sqmPayments/', 'SqmPaymentController@index')->name('sqmPayment.index');
 Route::get('/sqmPayments/get', 'SqmPaymentController@serveSqmPayments')->name('sqmPayment.serveSqmPayments');
 Route::post('/sqmPayment', 'SqmPaymentController@store')->name('sqmPayment.store');
 
 #Claim
-Route::get('/claim/{claim}', 'ClaimController@show')->name('claim.show');
 Route::delete('/claim/{claim}', 'ClaimController@delete')->name('claim.delete');
 Route::patch('/claim/{claim}', 'ClaimController@update')->name('claim.update');
 Route::get('/claims/get', 'ClaimController@serveClaims')->name('claim.serveClaims');
 Route::post('/claim', 'ClaimController@store')->name('claim.store');
 Route::get('/claims/showDocument', 'ClaimController@showDocument')->name('claim.showDocument');
+
+#ProofOfUse
+Route::get('/proofOfUse/{proofOfUse}', 'ProofOfUseController@show')->name('proofOfUse.show');
+Route::delete('/proofOfUse/{proofOfUse}', 'ProofOfUseController@delete')->name('proofOfUse.delete');
+Route::patch('/proofOfUse/{proofOfUse}', 'ProofOfUseController@update')->name('proofOfUse.update');
+Route::get('/proofOfUses/get', 'ProofOfUseController@serveProofOfUses')->name('proofOfUse.serveProofOfUses');
+Route::post('/proofOfUse', 'ProofOfUseController@store')->name('proofOfUse.store');
+Route::get('/proofOfUses/showDocument', 'ProofOfUseController@showDocument')->name('proofOfUse.showDocument');
+
+#User
+Route::delete('/user/{user}', 'UserController@delete')->name('user.delete')->middleware('can:deleteAny');
+Route::patch('/user/{user}', 'UserController@update')->name('user.update')->middleware('can:updateAny');
+Route::get('/users/get', 'UserController@serveUsers')->name('user.serveUsers')->middleware('can:viewAny');
+Route::post('/user', 'UserController@store')->name('user.store')->middleware('can:createAny');
+Route::get('/users/', 'UserController@index')->name('user.index')->middleware('can:viewAny');
 
 #CostType
 Route::get('/costTypes/get', 'CostTypeController@serveCostTypes')->name('costType.serveCostTypes');

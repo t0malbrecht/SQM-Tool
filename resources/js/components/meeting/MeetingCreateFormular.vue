@@ -16,17 +16,7 @@
                 <div v-if="this.errors && this.errors.date" class="text-danger">{{ this.errors.date[0] }}</div>
             </b-form-group>
 
-            <b-form-group id="input-group-2" label="Nummer der Sitzung im Jahr" label-for="number">
-                <b-form-input
-                    id="number"
-                    v-model="form.number"
-                    type="number"
-                ></b-form-input>
-                <div v-if="this.errors && this.errors.number" class="text-danger">{{ this.errors.number[0] }}</div>
-                <div class="text-danger">{{ this.combinedError }}</div>
-            </b-form-group>
-
-            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button type="submit" variant="primary">Speichern</b-button>
         </b-form>
     </div>
 </template>
@@ -38,7 +28,6 @@
             return {
                 form: {},
                 errors: {},
-                combinedError: '',
                 success: false,
                 loaded: true,
             }
@@ -54,7 +43,6 @@
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
-                            //this.$refs.MeetingIndexTable.refresh()
                             this.$root.$emit('bv::refresh::table', 't1')
                             window.location = '/meetings'
                         })

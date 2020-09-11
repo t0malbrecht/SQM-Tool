@@ -52,6 +52,15 @@ Vue.component('claim-create-formular', require('./components/claim/ClaimCreateFo
 Vue.component('claim-edit-formular', require('./components/claim/ClaimEditFormular.vue').default);
 Vue.component('claim-index-table', require('./components/claim/ClaimIndexTable.vue').default);
 
+Vue.component('proofofuse-create-formular', require('./components/proofOfUse/ProofOfUseCreateFormular.vue').default);
+Vue.component('proofofuse-create-button', require('./components/proofOfUse/ProofOfUseCreateButton.vue').default);
+Vue.component('proofofuse-edit-formular', require('./components/proofOfUse/ProofOfUseEditFormular.vue').default);
+Vue.component('proofofuse-show', require('./components/proofOfUse/ProofOfUseShow.vue').default);
+
+Vue.component('user-create-formular', require('./components/user/UserCreateFormular.vue').default);
+Vue.component('user-edit-formular', require('./components/user/UserEditFormular.vue').default);
+Vue.component('user-index-table', require('./components/user/UserIndexTable.vue').default);
+
 Vue.component('clickable-blop', require('./components/ClickableBlop.vue').default);
 
 Vue.component('onetime-or-ongoingpayment-picker', require('./components/OneTimeOrOgoingPaymentPicker.vue').default);

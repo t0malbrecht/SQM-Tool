@@ -18,6 +18,9 @@
                     <div class="pr-5">
                         Telefonnummer: <strong>{{$personalData->number}}</strong>
                     </div>
+                    <div class="pr-5">
+                        Email: <strong>{{$personalData->email}}</strong>
+                    </div>
                 </div>
             </div>
         </div>

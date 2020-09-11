@@ -56,6 +56,7 @@ class OneTimePaymentController extends Controller
         $perPage = htmlspecialchars($request->input('perPage'));
         $startDate = htmlspecialchars($request->input('startDate'));
         $endDate = htmlspecialchars($request->input('endDate'));
+        $chargedFundsCenter = htmlspecialchars($request->input('chargedFundsCenter'));
 
         if($find != 'null' && $find != null){
             return OneTimePayment::with(['favoredFundsCenter','chargedFundsCenter', 'claim', 'costType'])->find($find);
@@ -76,6 +77,9 @@ class OneTimePaymentController extends Controller
                 ->orWhere('notes', 'like', '%' . $filter . '%')
                 ->orWhere('requirements', 'like', '%' . $filter . '%')
                 ->orWhere('dueDate', 'like', '%' . $filter . '%');
+        }
+        if($chargedFundsCenter != 'null' && $chargedFundsCenter != null){
+            $query->where('chargedFundsCenter_id', '=', $chargedFundsCenter);
         }
         if($startDate != 'null' && $startDate != null)
             $query->where('dueDate', '>=', $startDate);
@@ -204,7 +208,7 @@ class OneTimePaymentController extends Controller
     }
 
     public function delete(OneTimePayment $oneTimePayment){
-        if(sizeof($oneTimePayment->proofOfUses) == 0){
+        if($oneTimePayment->proofOfUse == null){
             try {
                 $oneTimePayment->delete();
             } catch (\Exception $e) {

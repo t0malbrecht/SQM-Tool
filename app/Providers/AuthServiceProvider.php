@@ -17,7 +17,6 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
         'App\PersonalData' => 'App\Policies\PersonalDataPolicy',
-        PersonalData::class => PersonalDataPolicy::class,
     ];
 
     /**
@@ -29,12 +28,20 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('view users', function($user){
-           return $user->isAdmin();
+        Gate::define('viewAny', function($user){
+           return $user->isStudiendekan();
         });
 
-        Gate::define('create users', function($user){
-            return $user->isAdmin();
+        Gate::define('createAny', function($user){
+            return $user->isStudiendekan();
+        });
+
+        Gate::define('deleteAny', function($user){
+            return $user->isStudiendekan();
+        });
+
+        Gate::define('updateAny', function($user){
+            return $user->isStudiendekan();
         });
 
         //

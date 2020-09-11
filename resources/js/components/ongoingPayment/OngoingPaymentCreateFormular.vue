@@ -74,7 +74,7 @@
                 <div class="col-6">
                     <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="chargedFundsCenter_id">
                         <b-form-select v-model="form.chargedFundsCenter_id" id="chargedFundsCenter_id"
-                                       :options="funds_options"></b-form-select>
+                                       :options="charged_funds_options"></b-form-select>
                         <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
                             this.errors.chargedFundsCenter_id[0] }}
                         </div>
@@ -144,7 +144,7 @@
                 <div class="col-6">
                     <b-form-checkbox
                         id="christmasBonus"
-                        v-model="this.form.christmasBonus"
+                        v-model="form.christmasBonus"
                         name="checkbox-1"
                         value="true"
                         unchecked-value="false"
@@ -170,6 +170,7 @@
                 loaded: true,
                 claim_options: [],
                 funds_options: [],
+                charged_funds_options: [],
                 costType_options: [],
                 due_options: [
                     {value: 'monthly', text: 'monatlich'},
@@ -183,6 +184,67 @@
                 startYear: ''
             }
         },
+        created() {
+            axios.get('/fundsCenters/get').then(response => {
+                let array = [];
+                let i;
+                let prof;
+                for (i = 0; i < response.data[0].length; i++) {
+                    prof = response.data[0][i]['professor']
+                    console.log(prof)
+                    if (prof === null) {
+                        prof = ''
+                    } else {
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {
+                        text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
+                        value: response.data[0][i]['id'],
+                        disabled: false
+                    };
+                }
+                this.funds_options = array || [];
+            }).catch(errors => {
+            });
+            axios.get('/claims/get').then(response => {
+                let array = [];
+                let i;
+                for (i = 0; i < response.data[0].length; i++) {
+                    array[i] = {text: response.data[0][i]['title'], value: response.data[0][i]['id'], disabled: false};
+                }
+                this.claim_options = array || [];
+            }).catch(errors => {
+            });
+            axios.get('/costTypes/get').then(response => {
+                let array = [];
+                let i;
+                for (i = 0; i < response.data.length; i++) {
+                    array[i] = {text: response.data[i]['name'], value: response.data[i]['id'], disabled: false};
+                }
+                this.costType_options = array || [];
+                this.form.claim_id = this.claim.id
+            }).catch(errors => {
+            });
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                let prof;
+                for (i = 0; i < response.data[0].length; i++) {
+                    prof = response.data[0][i]['professor']
+                    if (prof === null) {
+                        prof = ''
+                    } else {
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {
+                        text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
+                        value: response.data[0][i]['id'],
+                        disabled: false
+                    };
+                }
+                this.charged_funds_options = array;
+            }).catch(errors => {console.log(errors)});
+        },
         methods: {
             onSubmit() {
                 if (this.loaded) {
@@ -194,7 +256,6 @@
                     console.log(this.form)
                     axios.post('/ongoingPayment', this.form)
                         .then(response => {
-                            console.log(response.data);
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
@@ -224,44 +285,6 @@
                     this.form.due = 'monthly';
                 }
             }
-        },
-        created() {
-            axios.get('/fundsCenters/get').then(response => {
-                let array = [];
-                let i;
-                let prof;
-                for (i = 0; i < response.data[0].length; i++) {
-                    prof = response.data[0][i]['professor']
-                    console.log(prof)
-                    if(prof === null){
-                        prof = ''
-                    }else{
-                        prof = ' - ' + prof
-                    }
-                    array[i] = {text: response.data[0][i]['fundsCenterNumber']+' - '+response.data[0][i]['description'] + prof, value: response.data[0][i]['id'], disabled: false};
-                }
-                this.funds_options = array || [];
-            }).catch(errors => {
-            });
-            axios.get('/claims/get').then(response => {
-                let array = [];
-                let i;
-                for (i = 0; i < response.data[0].length; i++) {
-                    array[i] = {text: response.data[0][i]['title'], value: response.data[0][i]['id'], disabled: false};
-                }
-                this.claim_options = array || [];
-            }).catch(errors => {
-            });
-            axios.get('/costTypes/get').then(response => {
-                let array = [];
-                let i;
-                for (i = 0; i < response.data.length; i++) {
-                    array[i] = {text: response.data[i]['name'], value: response.data[i]['id'], disabled: false};
-                }
-                this.costType_options = array || [];
-                this.form.claim_id = this.claim.id
-            }).catch(errors => {
-            });
         }
     }
 </script>

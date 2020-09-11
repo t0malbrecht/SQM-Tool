@@ -35,7 +35,7 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'notes' => 'required|max:500',
+            'notes' => 'max:500',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
@@ -43,19 +43,27 @@ class OngoingPaymentController extends Controller
             'christmasBonus' => ''
         ]);
 
+        $data['christmasBonus'] = $data['christmasBonus'] ?? false;
+
+        if($data['christmasBonus'] == 'true' ?? $data['christmasBonus'] = false){
+            $data['christmasBonus'] = true;
+        }else{
+            $data['christmasBonus'] = false;
+        }
+
         try {
             $ongoingPayment = OngoingPayment::create([
                 'claim_id' => $data['claim_id'],
+                'christmasBonus' => $data['christmasBonus'],
                 'favoredFundsCenter_id' => $data['favoredFundsCenter_id'],
                 'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
-                'notes' => $data['notes'],
+                'notes' => $data['notes'] ?? null,
                 'plannedStartDate' => $data['plannedStartDate'],
                 'plannedEndDate' => $data['plannedEndDate'],
                 'due' => $data['due'],
-                'requirements' => $data['requirements'],
-                'christmasBonus' => $data['christmasBonus'] ?? null
+                'requirements' => $data['requirements'] ?? null,
             ]);
             $ongoingPayment->save();
             $this->createPaymentHistories($data, $ongoingPayment);
@@ -73,13 +81,22 @@ class OngoingPaymentController extends Controller
             'chargedFundsCenter_id' => 'required|numeric',
             'costType_id' => 'required|numeric',
             'grantedFunds' => 'required|numeric',
-            'notes' => 'required|max:500',
+            'notes' => 'max:500',
             'plannedStartDate' => 'required|date',
             'plannedEndDate' => 'required|date',
             'due' => 'required',
             'requirements' => 'max:500',
             'christmasBonus' => ''
         ]);
+
+        $data['christmasBonus'] = $data['christmasBonus'] ?? false;
+
+        if($data['christmasBonus'] == 'true' ?? $data['christmasBonus'] = false){
+            $data['christmasBonus'] = true;
+        }else{
+            $data['christmasBonus'] = false;
+        }
+
         try {
             $ongoingPayment->update([
                 'claim_id' => $data['claim_id'],
@@ -87,12 +104,12 @@ class OngoingPaymentController extends Controller
                 'chargedFundsCenter_id' => $data['chargedFundsCenter_id'],
                 'costType_id' => $data['costType_id'],
                 'grantedFunds' => $data['grantedFunds'],
-                'notes' => $data['notes'],
+                'notes' => $data['notes'] ?? null,
                 'plannedStartDate' => $data['plannedStartDate'],
                 'plannedEndDate' => $data['plannedEndDate'],
                 'due' => $data['due'],
-                'requirements' => $data['requirements'],
-                'christmasBonus' => $data['christmasBonus'] ?? null
+                'requirements' => $data['requirements'] ?? null,
+                'christmasBonus' => $data['christmasBonus'] ?? false
             ]);
             $this->deletePlannedPaymentHistories($data, $ongoingPayment);
 
@@ -125,7 +142,7 @@ class OngoingPaymentController extends Controller
                 $period = new DatePeriod($startDate, $interval, $endDate);
         }
         foreach ($period as $dt) {
-            $plannedPaymentDate = ($dt->format("Y-m-d"));
+            $plannedPaymentDate = ($dt->format("Y-m-t"));
             $dontCalculateChristmasBonus = $data['christmasBonus'] ?? false;
             if($dt->format("n") == 10 && $due == 'monthly' && !$dontCalculateChristmasBonus){
                     $ongoingPayment->ongoingPaymentHistories()->create([
@@ -285,7 +302,7 @@ class OngoingPaymentController extends Controller
     }
 
     public function delete(OngoingPayment $ongoingPayment){
-        if(sizeof($ongoingPayment->proofOfUses) == 0 && sizeof($ongoingPayment->ongoingPaymentHistories) == 0){
+        if($ongoingPayment->proofOfUse == null && sizeof($ongoingPayment->ongoingPaymentHistories) == 0){
             try {
                 $ongoingPayment->delete();
             } catch (\Exception $e) {

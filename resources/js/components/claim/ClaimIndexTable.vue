@@ -23,6 +23,7 @@
                 <div class="d-flex">
                     <h2 class="pb-2">Anträge</h2>
                     <img src="/svg/add.svg" style="height: 20px;" class="pl-2" @click="addClaim">
+                    <img src="/svg/export.svg" style="height: 20px;" class="pl-2 ml-auto mr-3" @click="exportXlsx">
                 </div>
                 <b-form-group>
                     <b-input-group size="sm">
@@ -174,6 +175,9 @@
                     return '/svg/show.svg'
 
                 }
+            },
+            exportXlsx(){
+                window.open('/meeting/exportXlsx/' + this.meeting.id);
             }
         }
     }

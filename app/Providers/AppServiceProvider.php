@@ -24,8 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        OneTimePayment::created(function ($oneTimePayment) {
-            $oneTimePayment->update(['id' => 0 . $oneTimePayment->id]);
-        });
+        //
     }
 }

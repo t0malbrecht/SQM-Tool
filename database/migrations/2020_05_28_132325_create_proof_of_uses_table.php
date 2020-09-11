@@ -16,7 +16,7 @@ class CreateProofOfUsesTable extends Migration
         Schema::create('proof_of_uses', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('grantedClaim_id');
+            $table->string('grantedClaim_id');
             $table->string('submitter');
             $table->date('submitDate');
             $table->string('document')->unique();

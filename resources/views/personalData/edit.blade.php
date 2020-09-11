@@ -60,6 +60,22 @@
                         @enderror
                     </div>
 
+                    <div class="form-group row">
+                        <label for="email" class="col-md-4 col-form-label">Email</label>
+                        <input
+                            id="email"
+                            type="text"
+                            class="form-control @error('number') is-invalid @enderror"
+                            name="email"
+                            value="{{ old('email') ?? $personalData->email}}" autocomplete="email">
+
+                        @error('email')
+                        <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
                     <div class="row pt-4">
                         <button class="btn btn-primary">Änderungen speichern</button>
                     </div>

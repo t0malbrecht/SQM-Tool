@@ -27,12 +27,22 @@ class PersonalDataController extends Controller
 
     public function update(PersonalData $personalData){
         $data = request()->validate([
-            'firstname' => 'required',
-            'lastname' => 'required',
+            'firstname' => '',
+            'lastname' => '',
+            'email' => '',
             'number' => '',
         ]);
-        auth()->user()->personalData()->update($data);
+        try {
+            $personalData->update([
+                'firstname' => $data['firstname'],
+                'lastname' => $data['lastname'],
+                'email' => $data['email'],
+                'number' => $data['number'],
+            ]);
+        }catch (QueryException $ex){
+            return response()->json(null, 423);
+        }
 
-        return redirect('/personalData/'.auth()->user()->id);
+        return redirect('/personalData/'.$personalData->id);
     }
 }

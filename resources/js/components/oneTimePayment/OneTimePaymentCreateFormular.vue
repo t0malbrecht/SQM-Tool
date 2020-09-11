@@ -45,7 +45,7 @@
             </div>
             <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="ot_chargedFundsCenter_id">
                 <b-form-select v-model="form.chargedFundsCenter_id" id="ot_chargedFundsCenter_id"
-                               :options="funds_options"></b-form-select>
+                               :options="charged_funds_options"></b-form-select>
                 <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
                     this.errors.chargedFundsCenter_id[0] }}
                 </div>
@@ -100,6 +100,7 @@
                 success: false,
                 loaded: true,
                 claim_options: [],
+                charged_funds_options: [],
                 funds_options: [],
                 costType_options: [],
                 dueDate: 'Nichts ausgewählt',
@@ -144,7 +145,6 @@
                 let prof;
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
-                    console.log(prof)
                     if(prof === null){
                         prof = ''
                     }else{
@@ -174,6 +174,25 @@
                 this.form.claim_id = this.claim.id
             }).catch(errors => {
             });
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                let prof;
+                for (i = 0; i < response.data[0].length; i++) {
+                    prof = response.data[0][i]['professor']
+                    if (prof === null) {
+                        prof = ''
+                    } else {
+                        prof = ' - ' + prof
+                    }
+                    array[i] = {
+                        text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
+                        value: response.data[0][i]['id'],
+                        disabled: false
+                    };
+                }
+                this.charged_funds_options = array;
+            }).catch(errors => {console.log(errors)});
         }
     }
 </script>

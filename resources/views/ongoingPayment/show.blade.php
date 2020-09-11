@@ -6,11 +6,12 @@
             <div class="col-9 pt-5">
                     <div class="d-flex">
                         <h1 class="pb-2">Mehrmalszahlung</h1>
-                        <ongoingpayment-edit-button v-bind:ongoingpayment={{$ongoingPayment->id}}></ongoingpayment-edit-button>
+                        <ongoingpayment-edit-button :ongoingpayment={{$ongoingPayment->id}}></ongoingpayment-edit-button>
+                        <proofofuse-create-button :payment1="{{$ongoingPayment}}"></proofofuse-create-button>
                     </div>
                 <div>
                     <div class="pr-5">
-                        Beschreibung <strong>{{$ongoingPayment->description}}</strong>
+                        Titel <strong>{{$ongoingPayment->claim->title}}</strong>
                     </div>
                     <div class="pr-5">
                         Betrag: <strong>{{$ongoingPayment->grantedFunds}}</strong>
@@ -23,6 +24,12 @@
                     </div>
                     <div class="pr-5">
                         Geplantes Enddatum: <strong>{{$ongoingPayment->plannedEndDate}}</strong>
+                    </div>
+                    <div class="pr-5">
+                        Notizen: <strong>{{$ongoingPayment->requirements}}</strong>
+                    </div>
+                    <div class="pr-5">
+                        Anforderungen: <strong>{{$ongoingPayment->requirements}}</strong>
                     </div>
 
                 </div>

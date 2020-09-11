@@ -14,15 +14,6 @@
                 ></b-form-datepicker>
                 <div v-if="this.errors && this.errors.date" class="text-danger">{{ this.errors.date[0] }}</div>
             </b-form-group>
-
-            <b-form-group id="input-group-2" label="Nummer der Sitzung im Jahr" label-for="number">
-                <b-form-input
-                    id="number"
-                    v-model="form.number"
-                    type="number"
-                ></b-form-input>
-                <div v-if="this.errors && this.errors.number" class="text-danger">{{ this.errors.number[0] }}</div>
-            </b-form-group>
             <div class="row d-flex pl-3 pt-3">
                 <b-button type="submit" variant="primary" class="mr-auto ml-0">Speichern</b-button>
                 <b-button type="button" variant="primary" class="ml-auto mr-3" @click.prevent="showDeleteDialog">Löschen</b-button>

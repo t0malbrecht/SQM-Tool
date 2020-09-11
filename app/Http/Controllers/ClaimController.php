@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Claim;
+use App\OneTimePayment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClaimController extends Controller
 {
@@ -47,19 +49,23 @@ class ClaimController extends Controller
             ]);
             $claim->save();
         }catch (QueryException $ex){
-            return response()->json(null, 200);
+            return response()->json(null, 423);
         }
 
         return response()->json(null, 200);
     }
 
     public function serveClaims(Request $request){
-        //ToDO: Filter nach Anträgen ohne zugeordnetem grantedClaim für Zahlungen erstellen (außer Zahlung erstellen nur über Antrag möglich)
-
+        $find = htmlspecialchars($request->input('find'));
         $filter = htmlspecialchars($request->input('filter'));
         $sortBy = htmlspecialchars($request->input('sortBy'));
         $perPage = htmlspecialchars($request->input('perPage'));
         $id = htmlspecialchars($request->input('id'));
+
+        if($find != 'null' && $find != null){
+            return Claim::Find($find);
+        }
+
 
         $sortWay = 'asc';
         if($request->input('sortDesc') == 'true')
@@ -128,7 +134,7 @@ class ClaimController extends Controller
                 'decided' => $data['decided']
             ]);
         }catch(QueryException $e){
-            return response()->json(null, 433);
+            return response()->json(null, 423);
         }
 
         return response()->json(null, 200);
@@ -137,6 +143,7 @@ class ClaimController extends Controller
     public function delete(Claim $claim){
         if($claim->oneTimePayment == null && $claim->ongoingPayment == null){
             try {
+                Storage::disk('public')->delete($claim->document);
                 $claim->delete();
             } catch (\Exception $e) {
                 return response()->json(null, 423);

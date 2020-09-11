@@ -38,7 +38,7 @@ class SqmPaymentController extends Controller
             ]);
             $sqmPayment->save();
         }catch (QueryException $ex){
-            return response()->json($ex->getMessage(), 200);
+            return response()->json(null, 423);
         }
 
         return response()->json(null, 200);
@@ -49,8 +49,7 @@ class SqmPaymentController extends Controller
         $filter = htmlspecialchars($request->input('filter'));
         $sortBy = htmlspecialchars($request->input('sortBy'));
         $perPage = htmlspecialchars($request->input('perPage'));
-        $startDate = htmlspecialchars($request->input('startDate'));
-        $dueDate = htmlspecialchars($request->input('dueDate'));
+        $chargedFundsCenter = htmlspecialchars($request->input('chargedFundsCenter'));
 
         $sortWay = 'asc';
         if($request->input('sortDesc') == 'true')
@@ -59,11 +58,20 @@ class SqmPaymentController extends Controller
             $sortBy = 'dueDate';
         }
 
-        $query = SqmPayment::with('fundsCenter');
-        if($filter != 'null' && $filter != null)
-            $query->where('startDate', 'like', '%'.$filter.'%')
-                ->orWhere('dueDate', 'like', '%'.$filter.'%')
-                ->orWhere('amount', 'like', '%'.$filter.'%');
+        if($filter != 'null' && $filter != null){
+            $query = SqmPayment::with(['fundsCenter'])->whereHas('fundsCenter', function($query) use ($filter) {
+                $query->where('description', 'like', '%'.$filter.'%')
+                    ->orwhere('startDate', 'like', '%'.$filter.'%')
+                    ->orWhere('dueDate', 'like', '%'.$filter.'%')
+                    ->orWhere('dueDate', 'like', '%'.$filter.'%')
+                    ->orWhere('amount', 'like', '%'.$filter.'%');;});
+        }else{
+            $query = SqmPayment::with(['fundsCenter']);
+        }
+
+        if($chargedFundsCenter != 'null' && $chargedFundsCenter != null){
+            $query->where('fundsCenter_id', '=', $chargedFundsCenter);
+        }
         $query->orderBy($sortBy, $sortWay);
         if($perPage != 'null' and $perPage != null){
             $query->paginate($perPage);
@@ -96,9 +104,18 @@ class SqmPaymentController extends Controller
                 'amount' => $data['amount'],
             ]);
         }catch (QueryException $ex){
-            return response()->json($ex->getMessage(), 200);
+            return response()->json(null, 423);
         }
 
+        return response()->json(null, 200);
+    }
+
+    public function delete(SqmPayment $sqmPayment){
+        try {
+            $sqmPayment->delete();
+        } catch (\Exception $e) {
+            return response()->json(null, 423);
+        }
         return response()->json(null, 200);
     }
 }

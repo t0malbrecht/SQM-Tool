@@ -19,7 +19,7 @@ class CreateFundsCentersTable extends Migration
             $table->string('division');
             $table->string('description')->unique();
             $table->bigInteger('fundsCenterNumber')->unique();
-            $table->bigInteger('costCenter')->unique();
+            $table->bigInteger('costCenter')->unique()->nullable();
             $table->string('fond');
             $table->Integer('teachingUnit');
             $table->string('faculty');

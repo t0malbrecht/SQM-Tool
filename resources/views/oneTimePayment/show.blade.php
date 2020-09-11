@@ -8,11 +8,12 @@
                     <div class="d-flex">
                         <h1 class="pb-2">Einmalzahlung</h1>
                         <onetimepayment-edit-button v-bind:onetimepayment={{$oneTimePayment->id}}></onetimepayment-edit-button>
+                        <proofofuse-create-button v-bind:payment1="{{$oneTimePayment}}"></proofofuse-create-button>
                     </div>
                 </div>
                 <div>
                     <div class="pr-5">
-                        Beschreibung <strong>{{$oneTimePayment->description}}</strong>
+                        Titel <strong>{{$oneTimePayment->claim->title}}</strong>
                     </div>
                     <div class="pr-5">
                         gewährter Betrag: <strong>{{$oneTimePayment->grantedFunds}}</strong>
@@ -27,7 +28,10 @@
                         Ausgabetermin: <strong>{{$oneTimePayment->spentDate ?? 'Noch nicht ausgegeben'}}</strong>
                     </div>
                     <div class="pr-5">
-                        Bedingungen: <strong>{{$oneTimePayment->requirements}}</strong>
+                        Notizen: <strong>{{$oneTimePayment->requirements}}</strong>
+                    </div>
+                    <div class="pr-5">
+                        Anforderungen: <strong>{{$oneTimePayment->requirements}}</strong>
                     </div>
                 </div>
                 <div class="pt-3">

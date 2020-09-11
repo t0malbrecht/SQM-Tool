@@ -64,20 +64,29 @@
                 options: []
             }
         },
+        created() {
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                for (i=0; i<response.data[0].length; i++) {
+                    array[i] = {text: response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
+                }
+                this.options = array || [];
+            }).catch(errors => {});
+        },
         methods: {
             onSubmit() {
                 if (this.loaded) {
                     this.loaded = false;
                     this.success = false;
                     this.errors = {};
-                    console.log(this.form)
                     axios.post('/sqmPayment', this.form)
                         .then(response => {
-                            console.log(response.data);
                             this.fields = {}; //Clear input fields.
                             this.loaded = true;
                             this.success = true;
-                            //window.location = '/sqmPayments'
+                            this.$root.$emit('bv::refresh::table', 't1');
+                            this.$emit('closeModal');
                         })
                         .catch(errors => {
                             this.loaded = true;
@@ -91,17 +100,6 @@
                 }
             }
         },
-        created() {
-                axios.get('/fundsCenters/get?level=0').then(response => {
-                    let array = [];
-                    let i;
-                    for (i=0; i<response.data.length; i++) {
-                        array[i] = {text: response.data[i]['description'], value: response.data[i]['id'], disabled: false};
-                    }
-                    console.log(array)
-                   this.options = array || [];
-                }).catch(errors => {});
-            }
         }
 </script>
 

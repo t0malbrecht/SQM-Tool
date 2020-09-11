@@ -11,6 +11,7 @@
                     >
                         <b-form-datepicker
                             v-model="form.plannedStartDate"
+                            reset-button
                             id="plannedStartDate"
                             :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
                             locale="de"
@@ -29,6 +30,7 @@
                     >
                         <b-form-datepicker
                             v-model="form.plannedEndDate"
+                            reset-button
                             id="plannedEndDate"
                             :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
                             locale="de"
@@ -53,7 +55,7 @@
                 <div class="col-6">
                     <b-form-group id="input-group-5" label="Belastete Finanzstelle" label-for="chargedFundsCenter_id">
                         <b-form-select v-model="form.chargedFundsCenter_id" id="chargedFundsCenter_id"
-                                       :options="funds_options"></b-form-select>
+                                       :options="charged_funds_options"></b-form-select>
                         <div v-if="this.errors && this.errors.chargedFundsCenter_id" class="text-danger">{{
                             this.errors.chargedFundsCenter_id[0] }}
                         </div>
@@ -165,6 +167,7 @@
                 loaded: true,
                 claim_options: [],
                 funds_options: [],
+                charged_funds_options: [],
                 costType_options: [],
                 busy: false,
                 due_options: [
@@ -218,12 +221,20 @@
                 this.form.notes = this.payment.notes;
                 this.form.grantedFunds = this.payment.grantedFunds;
                 this.form.spentFunds = this.payment.spentFunds;
-                //this.form.christmasBonus = this.payment.christmasBonus;
+                this.form.christmasBonus = this.payment.christmasBonus === 1;
                 this.form.due = this.payment.due;
                 this.form.requirements = this.payment.requirements;
             }).catch(errors => {
                 console.log(errors)
             });
+            axios.get('/fundsCenters/get?level=0').then(response => {
+                let array = [];
+                let i;
+                for (i=0; i<response.data[0].length; i++) {
+                    array[i] = {text: response.data[0][i]['description'], value: response.data[0][i]['id'], disabled: false};
+                }
+                this.charged_funds_options = array || [];
+            }).catch(errors => {console.log(errors)});
         },
         methods: {
             onSubmit() {
@@ -272,6 +283,10 @@
             deleteItem(){
                 axios.delete('/ongoingPayment/'+this.payment.id) .then(response => {
                     this.$emit('closeModal');
+                    if(window.location.href.split('/')[3] === 'ongoingPayment'){
+                        console.log('close')
+                        window.close()
+                    }
                     this.$root.$emit('bv::refresh::table', 't1');
                 })
                     .catch(errors => {

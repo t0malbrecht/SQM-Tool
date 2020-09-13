@@ -222,10 +222,9 @@
                     minimumFractionDigits: 0
                 })
                 if(data.item.spentFunds > data.item.grantedFunds){
-                    document.getElementById("spentFunds").style.backgroundColor = "red";
-                }
-                if(data.item.spentFunds > data.item.grantedFunds){
-                    document.getElementById("spentFunds").style.backgroundColor = "red";
+                    if(document.getElementById("spentFunds") != null){
+                        document.getElementById("spentFunds").style.backgroundColor = "red";
+                    }
                 }
                 return formatter.format(data.item.spentFunds);
             },

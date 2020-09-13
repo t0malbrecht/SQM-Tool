@@ -25,7 +25,6 @@ Route::get('/personalData/{personalData}/edit', 'PersonalDataController@edit')->
 Route::patch('/personalData/{personalData}', 'PersonalDataController@update')->name('personalData.update')->middleware('can:update,personalData');
 
 #Meeting
-Route::get('/meeting/create', 'MeetingController@create')->name('meeting.create');
 Route::get('/meeting/{meeting}', 'MeetingController@show')->name('meeting.show');
 Route::get('/meeting/exportXlsx/{meeting}', 'MeetingController@exportXlsx')->name('meeting.exportXlsx');
 Route::delete('/meeting/{meeting}', 'MeetingController@delete')->name('meeting.delete');
@@ -73,7 +72,6 @@ Route::get('/ongoingPaymentHistories/get', 'OngoingPaymentHistoryController@serv
 Route::delete('/ongoingPaymentHistory/{ongoingPaymentHistory}', 'OngoingPaymentHistoryController@delete')->name('ongoingPaymentHistory.delete');
 
 #SqmPayment
-Route::get('/sqmPayment/create', 'SqmPaymentController@create')->name('sqmPayment.create');
 Route::get('/sqmPayment/{sqmPayment}', 'SqmPaymentController@show')->name('sqmPayment.show');
 Route::delete('/sqmPayment/{sqmPayment}', 'SqmPaymentController@delete')->name('sqmPayment.delete');
 Route::patch('/sqmPayment/{sqmPayment}', 'SqmPaymentController@update')->name('sqmPayment.update');

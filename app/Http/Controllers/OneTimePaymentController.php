@@ -137,9 +137,6 @@ class OneTimePaymentController extends Controller
         $filepath = storage_path('app/public/') . 'formularDocuments/AntragAufBudgetumbuchung.pdf';
         $pdf = new Pdf($filepath, [
             'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
-            // or on most Windows systems:
-            // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
-            //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
 
         $date = explode('-', $oneTimePayment->claim->meeting->date);

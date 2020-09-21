@@ -90,7 +90,7 @@
                 this.form.ioa = this.claim.ioa
                 this.form.printNumber = this.claim.printNumber;
                 this.form.claimant =  this.claim.claimant;
-                this.form.decided = this.claim.decided === 1;
+                this.form.decided = this.claim.decided == 1;
             }).catch(errors => {});
         },
         methods: {
@@ -113,10 +113,10 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
-                            if (errors.response.status === 423) {
+                            if (errors.response.status == 423) {
                                 this.combinedError = "Datenbankfehler";
                             }
                         });
@@ -138,13 +138,13 @@
                         if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
-                        if (errors.response.status === 412) {
+                        if (errors.response.status == 412) {
                             this.otherError = 'Konnte nicht gelöscht werden: Es sind noch Zahlungen mit dem Antrag verknüpft';
                         }
-                        if (errors.response.status === 500) {
+                        if (errors.response.status == 500) {
                             this.otherError = 'Interner Fehler';
                         }
                     });

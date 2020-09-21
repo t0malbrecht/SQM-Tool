@@ -71,7 +71,7 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
                         });

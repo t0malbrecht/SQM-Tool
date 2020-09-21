@@ -148,7 +148,7 @@
                 let prof;
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
-                    if(prof === null){
+                    if(prof == null){
                         prof = ''
                     }else{
                         prof = ' - ' + prof
@@ -194,7 +194,7 @@
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
                     console.log(prof)
-                    if (prof === null) {
+                    if (prof == null) {
                         prof = ''
                     } else {
                         prof = ' - ' + prof
@@ -229,7 +229,7 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
                             console.log(errors)
@@ -245,7 +245,7 @@
             deleteItem(){
                 axios.delete('/oneTimePayment/'+this.payment.id) .then(response => {
                     this.$emit('closeModal');
-                    if(window.location.href.split('/')[3] === 'oneTimePayment'){
+                    if(window.location.href.split('/')[3] == 'oneTimePayment'){
                         console.log('close')
                         window.close()
                     }
@@ -256,10 +256,10 @@
                         if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
-                        if (errors.response.status === 412) {
+                        if (errors.response.status == 412) {
                             this.otherError = 'Konnte nicht gelöscht werden: Es ist noch ein Verwendungsnachweis mit der Zahlung verknüpft';
                         }
                     });

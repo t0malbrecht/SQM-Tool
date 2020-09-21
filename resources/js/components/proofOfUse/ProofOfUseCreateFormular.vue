@@ -89,12 +89,12 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 console.log("Errors")
                                 console.log(errors.response)
                                 this.errors = errors.response.data.errors || {};
                             }
-                            if (errors.response.status === 423) {
+                            if (errors.response.status == 423) {
                                 this.combinedError = "Datenbankfehler";
                             }
                         });

@@ -192,7 +192,7 @@
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
                     console.log(prof)
-                    if (prof === null) {
+                    if (prof == null) {
                         prof = ''
                     } else {
                         prof = ' - ' + prof
@@ -231,7 +231,7 @@
                 let prof;
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
-                    if (prof === null) {
+                    if (prof == null) {
                         prof = ''
                     } else {
                         prof = ' - ' + prof
@@ -266,7 +266,7 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
                             console.log(errors.response.data);
@@ -281,7 +281,7 @@
             },
             changedCostType(){
                 console.log(this.form.costType_id)
-                if(this.form.costType_id === 1){
+                if(this.form.costType_id == 1){
                     this.form.due = 'monthly';
                 }
             }

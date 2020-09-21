@@ -142,7 +142,7 @@
                 this.$bvModal.show('edit-modal');
             },
             isDecided(item){
-              return item.decided !== 1;
+              return item.decided == 0;
             },
             addPayment(item){
                 if(item.one_time_payment ==  null && item.ongoing_payment == null){

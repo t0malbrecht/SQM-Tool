@@ -112,7 +112,7 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
                         });
@@ -127,7 +127,7 @@
             deleteItem(){
                 axios.delete('/sqmPayment/'+this.sqmPayment.id) .then(response => {
                     this.$emit('closeModal');
-                    if(window.location.href.split('/')[3] === 'sqmPayment'){
+                    if(window.location.href.split('/')[3] == 'sqmPayment'){
                         window.close()
                     }
                     this.$root.$emit('bv::refresh::table', 't1');
@@ -137,10 +137,10 @@
                         if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
-                        if (errors.response.status === 412) {
+                        if (errors.response.status == 412) {
                             this.otherError = 'Konnte nicht gelöscht werden: Es sind noch Zahlungen oder Verwendungsnachweise mit der Zahlung verknüpft';
                         }
                     });

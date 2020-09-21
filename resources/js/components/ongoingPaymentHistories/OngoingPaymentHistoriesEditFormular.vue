@@ -125,7 +125,7 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
                         });
@@ -144,10 +144,10 @@
                 })
                     .catch(errors => {
                         this.loaded = true;
-                        if (errors.response.status === 401) {
+                        if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
                     });

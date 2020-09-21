@@ -21,7 +21,7 @@
         created() {
             let promise = axios.get('/proofOfUses/get?find=' + this.payment1.unique_payment_id);
             return promise.then(response => {
-                if(response.data.length === 0){
+                if(response.data.length == 0){
                     console.log(response.data.length)
                 }else{
                     this.proofOfUse = response.data

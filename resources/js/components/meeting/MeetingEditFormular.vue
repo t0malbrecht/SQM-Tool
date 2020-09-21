@@ -70,10 +70,10 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
-                            if (errors.response.status === 423) {
+                            if (errors.response.status == 423) {
                                 this.otherError = "Datenbankfehler";
                             }
                         });
@@ -95,10 +95,10 @@
                         if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
-                        if (errors.response.status === 412) {
+                        if (errors.response.status == 412) {
                             this.otherError = 'Konnte nicht gelöscht werden: Es sind noch Anträge mit der Sitzung verknüpft';
                         }
                     });

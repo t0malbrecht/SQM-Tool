@@ -134,7 +134,7 @@
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
                     console.log(prof)
-                    if (prof === null) {
+                    if (prof == null) {
                         prof = ''
                     } else {
                         prof = ' - ' + prof

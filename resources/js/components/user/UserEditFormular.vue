@@ -88,10 +88,10 @@
                             if (errors.response.status == 401) {
                                 window.location = '/login';
                             }
-                            if (errors.response.status === 422) {
+                            if (errors.response.status == 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
-                            if (errors.response.status === 423) {
+                            if (errors.response.status == 423) {
                                 console.log(this.errors);
                                 this.otherError = "Datenbankfehler";
                             }
@@ -114,10 +114,10 @@
                         if (errors.response.status == 401) {
                             window.location = '/login';
                         }
-                        if (errors.response.status === 423) {
+                        if (errors.response.status == 423) {
                             this.otherError = "Datenbankfehler";
                         }
-                        if (errors.response.status === 500) {
+                        if (errors.response.status == 500) {
                             this.otherError = "Interner Server Fehler";
                         }
                     });

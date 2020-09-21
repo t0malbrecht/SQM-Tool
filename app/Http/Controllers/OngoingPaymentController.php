@@ -273,9 +273,9 @@ class OngoingPaymentController extends Controller
             'permit' => $ongoingPayment->ongoingPaymentHistories()->where('plannedPaymentDate', ">=", $startDate)
                 ->where('plannedPaymentDate', "<=", $endDate)->sum('grantedFunds'),
             'requirements' => '',
-            'fundscenter' => $ongoingPayment->chargedFundsCenter->fundsCenterNumber,
-            'costcenter' => $ongoingPayment->chargedFundsCenter->costCenter,
-            'fonds' => $ongoingPayment->chargedFundsCenter->fond,
+            'fundscenter' => $ongoingPayment->favoredFundsCenter->fundsCenterNumber,
+            'costcenter' => $ongoingPayment->favoredFundsCenter->costCenter,
+            'fonds' => $ongoingPayment->favoredFundsCenter->fond,
             'date' => date("d.m.y")
         ])->needAppearances()->send();
     }

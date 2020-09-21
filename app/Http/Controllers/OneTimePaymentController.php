@@ -176,9 +176,9 @@ class OneTimePaymentController extends Controller
                 ', SKII/' . $oneTimePayment->claim->printNumber . '/' . $lastTwoDigitsOfYear,
             'permit' => $oneTimePayment->grantedFunds,
             'requirements' => $oneTimePayment->requirements,
-            'fundscenter' => $oneTimePayment->chargedFundsCenter->fundsCenterNumber,
-            'costcenter' => $oneTimePayment->chargedFundsCenter->costCenter,
-            'fonds' => $oneTimePayment->chargedFundsCenter->fond,
+            'fundscenter' => $oneTimePayment->favoredFundsCenter->fundsCenterNumber,
+            'costcenter' => $oneTimePayment->favoredFundsCenter->costCenter,
+            'fonds' => $oneTimePayment->favoredFundsCenter->fond,
             'date' => date("d.m.y")
         ])->needAppearances()->send();
     }

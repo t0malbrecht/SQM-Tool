@@ -72,13 +72,24 @@ class UserController extends Controller
             'role' => ['required', 'numeric'],
         ]);
 
+        $password = $data['password'] ?? false;
+        if($password != false)
+            $password = true;
+
         try {
-            $user->update([
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'role' => $data['role'],
-            ]);
+            if($password)
+                $user->update([
+                    'username' => $data['username'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'role' => $data['role'],
+                ]);
+            else
+                $user->update([
+                    'username' => $data['username'],
+                    'email' => $data['email'],
+                    'role' => $data['role'],
+                ]);
         }catch (QueryException $ex){
             return response()->json(null, 423);
         }

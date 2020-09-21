@@ -91,6 +91,10 @@
                             if (errors.response.status === 422) {
                                 this.errors = errors.response.data.errors || {};
                             }
+                            if (errors.response.status === 423) {
+                                console.log(this.errors);
+                                this.otherError = "Datenbankfehler";
+                            }
                         });
                 }
             },

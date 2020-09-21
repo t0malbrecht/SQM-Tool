@@ -72,7 +72,7 @@ class OngoingPaymentHistoryController extends Controller
                     $grantedFunds = $grantedFunds + $item->grantedFunds;
                     $spentFunds = $spentFunds + $item->spentFunds;
                 }
-                $amountForEachOngoingPayment[] = ['title' => $value[0]->ongoingPayment->claim->title , 'ongoing_payment_id' => $value[0]->ongoing_payment_id, 'description' =>  $value[0]->ongoingPayment->claim->title, 'grantedFunds' => $grantedFunds,  'spentFunds' => $spentFunds, 'favoredFundsCenter' => $value[0]->ongoingPayment->favoredFundsCenter->description];
+                $amountForEachOngoingPayment[] = ['title' => $value[0]->ongoingPayment->claim->title ,'notes' => $value[0]->ongoingPayment->notes, 'ongoing_payment_id' => $value[0]->ongoing_payment_id, 'description' =>  $value[0]->ongoingPayment->claim->title, 'grantedFunds' => $grantedFunds,  'spentFunds' => $spentFunds, 'favoredFundsCenter' => $value[0]->ongoingPayment->favoredFundsCenter->description];
             }
             $result = $amountForEachOngoingPayment;
         }

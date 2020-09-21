@@ -26,44 +26,13 @@ class MeetingController extends Controller
         return view('meetings.index');
     }
 
-    public function serveMeetings(Request $request){
-        $filter = htmlspecialchars($request->input('filter'));
-        $sortBy = htmlspecialchars($request->input('sortBy'));
-        $perPage = htmlspecialchars($request->input('perPage'));
-        $startDate = htmlspecialchars($request->input('startDate'));
-        $endDate = htmlspecialchars($request->input('endDate'));
-
-        $sortWay = 'asc';
-        if($request->input('sortDesc') == 'true')
-            $sortWay = 'desc';
-
-
-        $query = Meeting::Select(['id','date']);
-        if($filter != 'null' && $filter != null) {
-            $query->where('date', 'like', '%' . $filter . '%');
-        }
-        if($startDate != 'null' && $startDate != null)
-            $query->where('date', '>=', $startDate);
-        if($endDate != 'null' && $endDate != null)
-            $query->where('date', '<=', $endDate);
-        if($perPage != 'null' && $perPage != null){
-            $query->paginate($perPage);
-        }
-
-        $query->orderBy($sortBy, $sortWay);
-        $result = $query->get();
-        $lastPage = $query->paginate($perPage)->lastPage();
-
-        return [$result, $lastPage];
-    }
-
     public function create(){
         return view('meetings.create');
     }
 
     public function store(){
         $data = request()->validate([
-            'date' => 'required|date',
+            'date' => 'required|date|unique:meetings',
         ]);
 
         try{
@@ -114,6 +83,37 @@ class MeetingController extends Controller
         }else{
             return response()->json(null, 412);
         }
+    }
+
+    public function serveMeetings(Request $request){
+        $filter = htmlspecialchars($request->input('filter'));
+        $sortBy = htmlspecialchars($request->input('sortBy'));
+        $perPage = htmlspecialchars($request->input('perPage'));
+        $startDate = htmlspecialchars($request->input('startDate'));
+        $endDate = htmlspecialchars($request->input('endDate'));
+
+        $sortWay = 'asc';
+        if($request->input('sortDesc') == 'true')
+            $sortWay = 'desc';
+
+
+        $query = Meeting::Select(['id','date']);
+        if($filter != 'null' && $filter != null) {
+            $query->where('date', 'like', '%' . $filter . '%');
+        }
+        if($startDate != 'null' && $startDate != null)
+            $query->where('date', '>=', $startDate);
+        if($endDate != 'null' && $endDate != null)
+            $query->where('date', '<=', $endDate);
+        if($perPage != 'null' && $perPage != null){
+            $query->paginate($perPage);
+        }
+
+        $query->orderBy($sortBy, $sortWay);
+        $result = $query->get();
+        $lastPage = $query->paginate($perPage)->lastPage();
+
+        return [$result, $lastPage];
     }
 
     public function exportXlsx(Meeting $meeting)

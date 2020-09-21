@@ -129,6 +129,8 @@
                 let array = [];
                 let i;
                 let prof;
+                array.push({text: 'Alle', value: null,
+                    disabled: false})
                 for (i = 0; i < response.data[0].length; i++) {
                     prof = response.data[0][i]['professor']
                     console.log(prof)
@@ -137,11 +139,11 @@
                     } else {
                         prof = ' - ' + prof
                     }
-                    array[i] = {
+                    array.push({
                         text: response.data[0][i]['fundsCenterNumber'] + ' - ' + response.data[0][i]['description'] + prof,
                         value: response.data[0][i]['id'],
                         disabled: false
-                    };
+                    });
                 }
                 this.options = array;
             }).catch(errors => {console.log(errors)});

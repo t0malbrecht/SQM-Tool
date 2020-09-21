@@ -26,7 +26,7 @@
                         Geplantes Enddatum: <strong>{{$ongoingPayment->plannedEndDate}}</strong>
                     </div>
                     <div class="pr-5">
-                        Notizen: <strong>{{$ongoingPayment->requirements}}</strong>
+                        Notizen: <strong>{{$ongoingPayment->notes}}</strong>
                     </div>
                     <div class="pr-5">
                         Anforderungen: <strong>{{$ongoingPayment->requirements}}</strong>

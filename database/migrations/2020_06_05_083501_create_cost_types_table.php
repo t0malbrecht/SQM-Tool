@@ -18,7 +18,12 @@ class CreateCostTypesTable extends Migration
             $table->timestamps();
             $table->string('name')->unique();
         });
+
+        DB::table('cost_types')->insert([
+            ['name' => 'Personalkosten'],
+            ['name' => 'Sachkosten'] ]);
     }
+
 
     /**
      * Reverse the migrations.

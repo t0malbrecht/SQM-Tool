@@ -28,7 +28,7 @@
                         Ausgabetermin: <strong>{{$oneTimePayment->spentDate ?? 'Noch nicht ausgegeben'}}</strong>
                     </div>
                     <div class="pr-5">
-                        Notizen: <strong>{{$oneTimePayment->requirements}}</strong>
+                        Notizen: <strong>{{$oneTimePayment->notes}}</strong>
                     </div>
                     <div class="pr-5">
                         Anforderungen: <strong>{{$oneTimePayment->requirements}}</strong>

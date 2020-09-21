@@ -3,7 +3,7 @@
 @section('content')
     <div class="row pb-3">
         <div class="col-12 text-center">
-            <div class="h2">Willkommen, {{auth()->user()->username}}</div>
+            <div class="h2">Willkommen, {{auth()->user()->personalData->firstname}}</div>
         </div>
     </div>
     <div class="row pt-3 text-center">

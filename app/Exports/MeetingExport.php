@@ -41,7 +41,7 @@ class MeetingExport implements FromCollection, WithHeadings
                 $temp->push($claim->ongoingPayment->favoredFundsCenter->fond);
                 $temp->push($claim->ongoingPayment->chargedFundsCenter->fundsCenterNumber);
                 $temp->push($claim->ongoingPayment->chargedFundsCenter->fond);
-                $temp->push($claim->ongoingPayment->grantedFunds);
+                $temp->push($claim->ongoingPayment->ongoingPaymentHistories->sum('grantedFunds'));
             }else{
                 $temp->push($claim->oneTimePayment->favoredFundsCenter->fundsCenterNumber);
                 $temp->push($claim->oneTimePayment->favoredFundsCenter->fond);

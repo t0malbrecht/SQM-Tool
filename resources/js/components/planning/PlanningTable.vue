@@ -126,6 +126,14 @@
         },
         created() {
             axios.get('/fundsCenters/get?level=0').then(response => {
+                this.allAllFunds = 0;
+                this.allGrantedFunds = 0;
+                this.allSpentFunds = 0;
+                this.allAvailableFunds = 0;
+                this.allAllFundsFormatted = null;
+                this.allGrantedFundsFormatted = null;
+                this.allSpentFundsFormatted = null;
+                this.allAvailableFundsFormatted= null;
                 let array = [];
                 let i;
                 let prof;
@@ -223,7 +231,7 @@
                     currency: 'EUR',
                     minimumFractionDigits: 0
                 })
-                if(data.item.spentFunds > data.item.grantedFunds){
+                if(Number(data.item.spentFunds) > Number(data.item.grantedFunds)){
                     if(document.getElementById("spentFunds") != null){
                         document.getElementById("spentFunds").style.backgroundColor = "red";
                     }

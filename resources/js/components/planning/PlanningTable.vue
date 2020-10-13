@@ -126,14 +126,6 @@
         },
         created() {
             axios.get('/fundsCenters/get?level=0').then(response => {
-                this.allAllFunds = 0;
-                this.allGrantedFunds = 0;
-                this.allSpentFunds = 0;
-                this.allAvailableFunds = 0;
-                this.allAllFundsFormatted = null;
-                this.allGrantedFundsFormatted = null;
-                this.allSpentFundsFormatted = null;
-                this.allAvailableFundsFormatted= null;
                 let array = [];
                 let i;
                 let prof;
@@ -158,6 +150,14 @@
         },
         methods: {
             myProvider(ctx) {
+                this.allAllFunds = 0;
+                this.allGrantedFunds = 0;
+                this.allSpentFunds = 0;
+                this.allAvailableFunds = 0;
+                this.allAllFundsFormatted = null;
+                this.allGrantedFundsFormatted = null;
+                this.allSpentFundsFormatted = null;
+                this.allAvailableFundsFormatted= null;
                 let promise = axios.get('/oneTimePayments/get?chargedFundsCenter=' + this.chargedFundsCenter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
                 return promise.then(response => {
                     let i

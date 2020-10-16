@@ -81,11 +81,24 @@ class OneTimePaymentController extends Controller
         if($chargedFundsCenter != 'null' && $chargedFundsCenter != null){
             $query->where('chargedFundsCenter_id', '=', $chargedFundsCenter);
         }
-        if($startDate != 'null' && $startDate != null)
-            $query->where('dueDate', '>=', $startDate);
-        if($endDate != 'null' && $endDate != null)
-            $query->where('dueDate', '<=', $endDate);
-        $query->orderBy($sortBy, $sortWay);
+
+        if($startDate != 'null' && $startDate != null){
+            if($endDate != 'null' && $endDate != null){
+                $query->where('dueDate', '>=', $startDate);
+                $query->where('dueDate', '<=', $endDate);
+                $query->orWhere(function ($query) use ($startDate, $endDate) {
+                    $query->where('spentDate', '>=', $startDate)
+                        ->where('spentDate', '<=', $endDate);
+                });
+            }else{
+                $query->where('dueDate', '>=', $startDate)
+                    ->orWhere('spentDate', '>=', $startDate);
+            }
+        }else if($endDate != 'null' && $endDate != null) {
+            $query->where('dueDate', '<=', $endDate)
+                ->orWhere('spentDate', '<=', $endDate);
+        }
+
         if($perPage != 'null' and $perPage != null){
             $query->paginate($perPage);
             $lastPage = $query->paginate($perPage)->lastPage();

@@ -150,14 +150,6 @@
         },
         methods: {
             myProvider(ctx) {
-                this.allAllFunds = 0;
-                this.allGrantedFunds = 0;
-                this.allSpentFunds = 0;
-                this.allAvailableFunds = 0;
-                this.allAllFundsFormatted = null;
-                this.allGrantedFundsFormatted = null;
-                this.allSpentFundsFormatted = null;
-                this.allAvailableFundsFormatted= null;
                 let promise = axios.get('/oneTimePayments/get?chargedFundsCenter=' + this.chargedFundsCenter + '&sortBy=' + ctx.sortBy + '&sortDesc=' + ctx.sortDesc + '&startDate=' + this.startDate + '&endDate=' + this.endDate);
                 return promise.then(response => {
                     let i
@@ -203,7 +195,9 @@
                          console.log(this.items)
                         let i
                         this.allGrantedFunds = 0;
+                        this.allGrantedFundsFormatted = formatter.format(this.allGrantedFunds);
                         this.allSpentFunds = 0;
+                        this.allSpentFundsFormatted = formatter.format(this.allSpentFunds);
                         for (i = 0; i < this.items.length; i++) {
                             this.allGrantedFunds = Number(this.allGrantedFunds) + Number(this.items[i].grantedFunds) - Number(this.items[i].spentFunds);
                             this.allGrantedFundsFormatted = formatter.format(this.allGrantedFunds);

@@ -136,7 +136,7 @@ class OneTimePaymentController extends Controller
     {
         $filepath = storage_path('app/public/') . 'formularDocuments/AntragAufBudgetumbuchung.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
         ]);
 
         $date = explode('-', $oneTimePayment->claim->meeting->date);
@@ -160,7 +160,7 @@ class OneTimePaymentController extends Controller
     public function createBskFormular(OneTimePayment $oneTimePayment){
         $filepath = storage_path('app/public/') . 'formularDocuments/BeschlussDerStudienkommission.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
             // or on most Windows systems:
             // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
             //'useExec' => true,  // May help on Windows systems if execution fails
@@ -186,7 +186,7 @@ class OneTimePaymentController extends Controller
     public function createVnFormular(OneTimePayment $oneTimePayment){
         $filepath = storage_path('app/public/') . 'formularDocuments/Verwendungsnachweis.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
             // or on most Windows systems:
             // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
             //'useExec' => true,  // May help on Windows systems if execution fails

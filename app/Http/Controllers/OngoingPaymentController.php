@@ -219,7 +219,7 @@ class OngoingPaymentController extends Controller
 
         $filepath = storage_path('app/public/') . 'formularDocuments/AntragAufBudgetumbuchung.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
             // or on most Windows systems:
             // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
             //'useExec' => true,  // May help on Windows systems if execution fails
@@ -255,8 +255,9 @@ class OngoingPaymentController extends Controller
 
         $filepath = storage_path('app/public/') . 'formularDocuments/BeschlussDerStudienkommission.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
             // or on most Windows systems:
+            // local: C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe
             // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
             //'useExec' => true,  // May help on Windows systems if execution fails
         ]);
@@ -283,7 +284,7 @@ class OngoingPaymentController extends Controller
     public function createVnFormular(OngoingPayment $ongoingPayment){
         $filepath = storage_path('app/public/') . 'formularDocuments/Verwendungsnachweis.pdf';
         $pdf = new Pdf($filepath, [
-            'command' => 'C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe',
+            'command' => '/usr/local/bin/pdftk',
             // or on most Windows systems:
             // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
             //'useExec' => true,  // May help on Windows systems if execution fails

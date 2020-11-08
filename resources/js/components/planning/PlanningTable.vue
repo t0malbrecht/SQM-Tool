@@ -190,16 +190,18 @@
                     let promise = axios.get('/sqmPayments/get?chargedFundsCenter=' + this.chargedFundsCenter
                         + '&startDate=' + this.startDate + '&endDate=' + this.endDate + '&sum=yes');
                     return promise.then(response => {
-                        this.allAllFunds = response.data[0] || 0;
+                        this.allAllFunds = Number(response.data[0]) || 0;
                         this.allAllFundsFormatted = formatter.format(this.allAllFunds);
                          console.log(this.items)
                         let i
                         this.allGrantedFunds = 0;
+                        this.allGrantedFundsFormatted = formatter.format(this.allGrantedFunds);
                         this.allSpentFunds = 0;
+                        this.allSpentFundsFormatted = formatter.format(this.allSpentFunds);
                         for (i = 0; i < this.items.length; i++) {
-                            this.allGrantedFunds = this.allGrantedFunds + this.items[i].grantedFunds - this.items[i].spentFunds;
+                            this.allGrantedFunds = Number(this.allGrantedFunds) + Number(this.items[i].grantedFunds) - Number(this.items[i].spentFunds);
                             this.allGrantedFundsFormatted = formatter.format(this.allGrantedFunds);
-                            this.allSpentFunds = this.allSpentFunds + this.items[i].spentFunds;
+                            this.allSpentFunds = Number(this.allSpentFunds) + Number(this.items[i].spentFunds);
                             this.allSpentFundsFormatted = formatter.format(this.allSpentFunds);
                         }
                         this.allAvailableFunds = this.allAllFunds - this.allGrantedFunds - this.allSpentFunds;
@@ -223,7 +225,7 @@
                     currency: 'EUR',
                     minimumFractionDigits: 0
                 })
-                if(data.item.spentFunds > data.item.grantedFunds){
+                if(Number(data.item.spentFunds) > Number(data.item.grantedFunds)){
                     if(document.getElementById("spentFunds") != null){
                         document.getElementById("spentFunds").style.backgroundColor = "red";
                     }

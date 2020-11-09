@@ -49,6 +49,8 @@ class SqmPaymentController extends Controller
         $filter = htmlspecialchars($request->input('filter'));
         $sortBy = htmlspecialchars($request->input('sortBy'));
         $perPage = htmlspecialchars($request->input('perPage'));
+        $startDate = htmlspecialchars($request->input('startDate'));
+        $endDate = htmlspecialchars($request->input('endDate'));
         $chargedFundsCenter = htmlspecialchars($request->input('chargedFundsCenter'));
 
         $sortWay = 'asc';
@@ -67,6 +69,23 @@ class SqmPaymentController extends Controller
                     ->orWhere('amount', 'like', '%'.$filter.'%');;});
         }else{
             $query = SqmPayment::with(['fundsCenter']);
+        }
+
+        if($startDate != 'null' && $startDate != null){
+            if($endDate != 'null' && $endDate != null){
+                $query->where('dueDate', '>=', $startDate);
+                $query->where('dueDate', '<=', $endDate);
+                $query->orWhere(function ($query) use ($startDate, $endDate) {
+                    $query->where('startDate', '>=', $startDate)
+                        ->where('startDate', '<=', $endDate);
+                });
+            }else{
+                $query->where('dueDate', '>=', $startDate)
+                    ->orWhere('startDate', '>=', $startDate);
+            }
+        }else if($endDate != 'null' && $endDate != null) {
+            $query->where('dueDate', '<=', $endDate)
+                ->orWhere('startDate', '<=', $endDate);
         }
 
         if($chargedFundsCenter != 'null' && $chargedFundsCenter != null){
